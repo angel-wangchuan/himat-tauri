@@ -1,0 +1,55 @@
+:root {
+  --navbar-height: env(titlebar-area-height, 36px);
+
+  user-select: none;
+}
+
+/* 关键属性：标记为可拖拽 */
+[data-tauri-drag-region] {
+  app-region: drag;
+  -webkit-app-region: drag;
+}
+
+/*滚动条*/
+/*滚动条整体部分,必须要设置*/
+::-webkit-scrollbar {
+  width: 6px !important;
+  height: 0 !important;
+}
+
+/*滚动条的轨道*/
+::-webkit-scrollbar-track {
+  background-color: var(--art-gray-200);
+}
+
+/*滚动条的滑块按钮*/
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #cccccc !important;
+  transition: all 0.2s;
+  -webkit-transition: all 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #b0abab !important;
+}
+
+/*滚动条的上下两端的按钮*/
+::-webkit-scrollbar-button {
+  height: 0px;
+  width: 0;
+}
+
+.dark {
+  ::-webkit-scrollbar-track {
+    background-color: var(--default-bg-color);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--art-gray-300) !important;
+  }
+}
+
+.custom-box {
+  @apply h-[calc(100dvh-var(--navbar-height)-6px)] m-[6px] mt-0 p-[6px] box-border bg-background rounded-[6px];
+}
