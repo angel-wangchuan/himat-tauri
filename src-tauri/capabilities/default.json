@@ -2,7 +2,9 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capability for the main window",
-  "windows": ["main"],
+  "windows": [
+    "main"
+  ],
   "permissions": [
     "core:default",
     "core:window:allow-start-dragging",
@@ -12,6 +14,7 @@
     "core:window:allow-is-maximized",
     "core:window:allow-set-decorations",
     "core:window:allow-set-title-bar-style",
-    "opener:default"
+    "opener:default",
+    "log:default"
   ]
 }

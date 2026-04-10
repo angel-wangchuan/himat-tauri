@@ -14,6 +14,7 @@
     "@himat/api-sdk": "link:../himat-api-sdk",
     "@internationalized/date": "^3.12.0",
     "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-log": "~2.8.0",
     "@tauri-apps/plugin-opener": "^2",
     "@vee-validate/zod": "^4.15.1",
     "@vueuse/core": "^14.2.1",

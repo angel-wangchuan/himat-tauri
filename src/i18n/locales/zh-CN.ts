@@ -1,5 +1,3 @@
-import { m } from "vue-router/dist/index-BzEKChPW.js";
-
 export default {
   app: {
     name: "HiMat",
@@ -87,6 +85,34 @@ export default {
     openclaw: {
       name: "OpenClaw",
       description: "构建和部署 AI 应用的平台",
+    },
+  },
+  nativeMenu: {
+    tray: {
+      show: "显示窗口",
+      quit: "退出",
+    },
+    mac: {
+      appMenuTitle: "HiMat",
+      about: "关于 HiMat",
+      services: "服务",
+      hide: "隐藏 HiMat",
+      hideOthers: "隐藏其他",
+      showAll: "显示全部",
+      quit: "退出 HiMat",
+      editMenuTitle: "编辑",
+      undo: "撤销",
+      redo: "重做",
+      cut: "剪切",
+      copy: "复制",
+      paste: "粘贴",
+      selectAll: "全选",
+      viewMenuTitle: "视图",
+      enterFullScreen: "进入全屏",
+      windowMenuTitle: "窗口",
+      showWindow: "显示窗口",
+      minimize: "最小化",
+      closeWindow: "关闭窗口",
     },
   },
 };

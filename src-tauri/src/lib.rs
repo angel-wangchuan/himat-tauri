@@ -1,28 +1,33 @@
-use tauri::Manager;
-use tauri_plugin_opener::OpenerExt;
+mod commands;
+mod tray;
 
-// 定义可从前端调用的命令
-#[tauri::command]
-fn get_platform() -> String {
-    std::env::consts::OS.to_string()
-}
-
-#[tauri::command]
-fn open_external(app: tauri::AppHandle, url: String) -> Result<(), String> {
-    app.opener()
-        .open_url(url, None::<&str>)
-        .map_err(|err| err.to_string())
-}
+use tauri::WindowEvent;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .level(tauri_plugin_log::log::LevelFilter::Info)
+                .build(),
+        )
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![get_platform, open_external])
+        .invoke_handler(tauri::generate_handler![
+            commands::get_platform,
+            commands::open_external,
+            commands::update_tray_tooltip,
+            commands::update_native_menus,
+        ])
+        .on_menu_event(tray::on_menu_event)
         .setup(|app| {
-            let window = app.get_webview_window("main").unwrap();
-
+            tray::create(app.handle())?;
             Ok(())
+        })
+        .on_window_event(|window, event| {
+            if let WindowEvent::CloseRequested { api, .. } = event {
+                api.prevent_close();
+                let _ = window.hide();
+            }
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

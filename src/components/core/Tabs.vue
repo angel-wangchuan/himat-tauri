@@ -227,27 +227,29 @@ onUnmounted(() => {
       </Button>
     </div>
 
-    <Button
-      variant="ghost"
-      class="size-6.5 flex shrink-0 hover:bg-background hover:text-primary"
-      :class="{
-        'bg-background text-primary': route.name === 'Settings',
-      }"
-      @mousedown.stop
-      @click="router.push({ name: 'Settings' })"
-    >
-      <SvgIcon icon="ri:settings-line" />
-    </Button>
-    <ButtonGroup v-if="platform !== 'macos'">
-      <Button variant="ghost" @click="minimizeWindow">
-        <SvgIcon icon="radix-icons:minus" />
+    <div>
+      <Button
+        variant="ghost"
+        class="size-6.5 flex shrink-0 hover:bg-background hover:text-primary"
+        :class="{
+          'bg-background text-primary': route.name === 'Settings',
+        }"
+        @mousedown.stop
+        @click="router.push({ name: 'Settings' })"
+      >
+        <SvgIcon icon="ri:settings-line" />
       </Button>
-      <Button variant="ghost" @click="maximizeWindow">
-        <SvgIcon icon="radix-icons:corners" />
-      </Button>
-      <Button variant="ghost" class="hover:bg-red-500 hover:text-white" @click="closeWindow">
-        <SvgIcon icon="radix-icons:cross-2" />
-      </Button>
-    </ButtonGroup>
+      <ButtonGroup v-if="platform !== 'macos'">
+        <Button variant="ghost" @click="minimizeWindow">
+          <SvgIcon icon="radix-icons:minus" />
+        </Button>
+        <Button variant="ghost" @click="maximizeWindow">
+          <SvgIcon icon="radix-icons:corners" />
+        </Button>
+        <Button variant="ghost" class="hover:bg-red-500 hover:text-white" @click="closeWindow">
+          <SvgIcon icon="radix-icons:cross-2" />
+        </Button>
+      </ButtonGroup>
+    </div>
   </header>
 </template>
