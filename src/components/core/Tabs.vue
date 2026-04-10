@@ -139,6 +139,18 @@ onMounted(async () => {
   }
 });
 
+const minimizeWindow = async () => {
+  await appWindow.minimize();
+};
+
+const maximizeWindow = async () => {
+  await appWindow.toggleMaximize();
+};
+
+const closeWindow = async () => {
+  await appWindow.close();
+};
+
 onUnmounted(() => {
   unlistenResize.value?.();
 });
@@ -146,13 +158,13 @@ onUnmounted(() => {
 
 <template>
   <header
-    class="sticky top-0 z-20 flex h-[var(--navbar-height)] items-center justify-between gap-2 px-[6px] select-none"
+    class="sticky top-0 z-20 flex h-[var(--navbar-height)] items-center justify-between gap-2 px-1.5 select-none"
     data-tauri-drag-region
   >
     <div class="flex min-w-0 items-center gap-2">
       <div
         class="flex h-full shrink-0 items-center"
-        :class="showTrafficLightsSpacer ? 'w-[100px] justify-end' : 'w-auto'"
+        :class="showTrafficLightsSpacer ? 'w-25 justify-end' : 'w-auto'"
         data-tauri-drag-region
       >
         <img
@@ -226,5 +238,16 @@ onUnmounted(() => {
     >
       <SvgIcon icon="ri:settings-line" />
     </Button>
+    <ButtonGroup v-if="platform !== 'macos'">
+      <Button variant="ghost" @click="minimizeWindow">
+        <SvgIcon icon="radix-icons:minus" />
+      </Button>
+      <Button variant="ghost" @click="maximizeWindow">
+        <SvgIcon icon="radix-icons:corners" />
+      </Button>
+      <Button variant="ghost" class="hover:bg-red-500 hover:text-white" @click="closeWindow">
+        <SvgIcon icon="radix-icons:cross-2" />
+      </Button>
+    </ButtonGroup>
   </header>
 </template>
