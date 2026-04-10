@@ -53,3 +53,7 @@
 .custom-box {
   @apply h-[calc(100dvh-var(--navbar-height)-6px)] m-[6px] mt-0 p-[6px] box-border bg-background rounded-[6px];
 }
+
+.custom-hover {
+  @apply shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-[0_12px_30px_rgba(113,150,206,0.14)];
+}

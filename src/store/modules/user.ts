@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { router } from "@/router";
 
 export interface User {
   id: number;
@@ -51,12 +52,15 @@ export const useUserStore = defineStore(
       refreshToken.value = value;
     }
 
-    function setServerList(value: string[]) {
-      serverList.value = value;
+    function removeServerList(value: string) {
+      serverList.value = serverList.value.filter((v) => v !== value);
     }
 
     function setServerUrl(value: string | undefined) {
       serverUrl.value = value;
+      if (value && !serverList.value.includes(value)) {
+        serverList.value.push(value);
+      }
     }
 
     function setSyncInterval(value: number) {
@@ -81,9 +85,7 @@ export const useUserStore = defineStore(
       user.value = undefined;
       accessToken.value = undefined;
       refreshToken.value = undefined;
-      serverUrl.value = undefined;
-      syncInterval.value = 60 * 10;
-      lastLoginMethod.value = "oauth";
+      router.push("/login");
     }
 
     return {
@@ -99,7 +101,7 @@ export const useUserStore = defineStore(
       setUser,
       setAccessToken,
       setRefreshToken,
-      setServerList,
+      removeServerList,
       setServerUrl,
       setSyncInterval,
       setLastLoginMethod,

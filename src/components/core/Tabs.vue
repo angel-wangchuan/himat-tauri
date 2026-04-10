@@ -3,21 +3,22 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 
+import { Webview } from "@tauri-apps/api/webview";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useTauri } from "@/composables/useTauri";
 import { router } from "@/router";
 import { AppLogo } from "@/config/env";
 import { getAppMenu } from "@/config/launchpad";
 
-import { useTabsStore } from "@/store/modules/tabs";
+import { createBrowserTabKey, useTabsStore } from "@/store/modules/tabs";
 
 defineOptions({ name: "Tabs", inheritAttrs: false });
 
 const route = useRoute();
-const { invoke } = useTauri();
+const { invoke, isTauri } = useTauri();
 const appWindow = getCurrentWindow();
 
-const tabCatalog = computed(() =>
+const staticTabCatalog = computed(() =>
   Object.fromEntries(
     getAppMenu()
       .map((item) => {
@@ -31,19 +32,50 @@ const tabCatalog = computed(() =>
         return [
           routeName,
           {
-            name: routeName,
+            key: routeName,
+            routeName,
             label: item.name,
             icon: item.icon,
           },
-        ] as const;
+        ] as const satisfies readonly [string, TabEntry];
       })
-      .filter(
-        (item): item is readonly [string, { name: string; label: string; icon: string }] => !!item,
-      ),
+      .filter((item): item is readonly [string, TabEntry] => !!item),
   ),
 );
 
-type TabName = string;
+const tabsStore = useTabsStore();
+const { visitedTabs, browserTabs } = storeToRefs(tabsStore);
+
+const dynamicTabCatalog = computed(() =>
+  Object.fromEntries(
+    browserTabs.value.map((tab) => [
+      tab.key,
+      {
+        key: tab.key,
+        routeName: "Browser",
+        routeParams: { tabId: tab.id },
+        label: tab.label,
+        icon: tab.icon,
+        webviewLabel: tab.webviewLabel,
+      } satisfies TabEntry,
+    ]),
+  ),
+);
+
+const tabCatalog = computed(() => ({
+  ...staticTabCatalog.value,
+  ...dynamicTabCatalog.value,
+}));
+
+type TabKey = string;
+type TabEntry = {
+  key: string;
+  routeName: string;
+  routeParams?: Record<string, string>;
+  label: string;
+  icon: string;
+  webviewLabel?: string;
+};
 
 const tabsScrollRef = ref<HTMLElement | null>(null);
 
@@ -51,34 +83,54 @@ const platform = ref<string>("");
 const isFullscreen = ref(false);
 const unlistenResize = ref<null | (() => void)>(null);
 
-const tabsStore = useTabsStore();
-const { visitedTabs } = storeToRefs(tabsStore);
-
 const showTrafficLightsSpacer = computed(() => platform.value === "macos" && !isFullscreen.value);
 
+const currentTabKey = computed(() => {
+  if (route.name === "Browser" && typeof route.params.tabId === "string") {
+    return createBrowserTabKey(route.params.tabId);
+  }
+
+  return typeof route.name === "string" ? route.name : null;
+});
+
+function tabToLocation(tab: TabEntry) {
+  return {
+    name: tab.routeName,
+    params: tab.routeParams,
+  };
+}
+
 watch(
-  () => route.name,
-  (name) => {
-    if (!name || typeof name !== "string" || !(name in tabCatalog.value)) {
+  currentTabKey,
+  async (tabKey, previousTabKey) => {
+    if (previousTabKey && previousTabKey !== tabKey && isTauri.value) {
+      const previousTab = tabCatalog.value[previousTabKey] as TabEntry | undefined;
+      if (previousTab?.webviewLabel) {
+        const webview = await Webview.getByLabel(previousTab.webviewLabel);
+        await webview?.hide();
+      }
+    }
+
+    if (!tabKey || !(tabKey in tabCatalog.value)) {
       return;
     }
 
-    tabsStore.ensureTab(name);
+    tabsStore.ensureTab(tabKey);
   },
   { immediate: true },
 );
 
 watch(
-  [() => route.name, visitedTabs],
-  async ([name]) => {
-    if (!name) {
+  [currentTabKey, visitedTabs],
+  async ([tabKey]) => {
+    if (!tabKey) {
       return;
     }
 
     await nextTick();
 
     const container = tabsScrollRef.value;
-    const activeTab = container?.querySelector<HTMLElement>(`[data-tab-name="${String(name)}"]`);
+    const activeTab = container?.querySelector<HTMLElement>(`[data-tab-key="${String(tabKey)}"]`);
     activeTab?.scrollIntoView({
       behavior: "smooth",
       inline: "nearest",
@@ -90,21 +142,27 @@ watch(
 
 const tabs = computed(() =>
   visitedTabs.value
-    .filter((name): name is TabName => name in tabCatalog.value)
-    .map((name) => tabCatalog.value[name]),
+    .filter((key): key is TabKey => key in tabCatalog.value)
+    .map((key) => tabCatalog.value[key] as TabEntry),
 );
 
-const closeTab = async (tabName: string) => {
-  const currentIndex = visitedTabs.value.indexOf(tabName);
+const closeTab = async (tabKey: string) => {
+  const currentIndex = visitedTabs.value.indexOf(tabKey);
   if (currentIndex === -1) {
     return;
   }
 
-  const nextTabs = visitedTabs.value.filter((name) => name !== tabName);
+  const nextTabs = visitedTabs.value.filter((name) => name !== tabKey);
+  const closedTab = tabCatalog.value[tabKey] as TabEntry | undefined;
 
-  tabsStore.closeTab(tabName);
+  tabsStore.closeTab(tabKey);
 
-  if (route.name !== tabName) {
+  if (closedTab?.webviewLabel && isTauri.value) {
+    const webview = await Webview.getByLabel(closedTab.webviewLabel);
+    await webview?.close();
+  }
+
+  if (currentTabKey.value !== tabKey) {
     return;
   }
 
@@ -113,7 +171,14 @@ const closeTab = async (tabName: string) => {
     await router.push({ name: "Home" });
     return;
   }
-  await router.push({ name: fallbackName });
+
+  const fallbackTab = tabCatalog.value[fallbackName] as TabEntry | undefined;
+  if (!fallbackTab) {
+    await router.push({ name: "Home" });
+    return;
+  }
+
+  await router.push(tabToLocation(fallbackTab));
 };
 
 const onTabsWheel = (event: WheelEvent) => {
@@ -183,18 +248,18 @@ onUnmounted(() => {
         >
           <div
             v-for="tab in tabs"
-            :key="tab.name"
+            :key="tab.key"
             class="shrink-0"
-            :data-tab-name="tab.name"
+            :data-tab-key="tab.key"
             @mousedown.stop
           >
             <Button
               variant="ghost"
               class="h-6.5 px-1 gap-1 hover:bg-background hover:text-primary group"
               :class="{
-                'bg-background text-primary': tab.name === route.name,
+                'bg-background text-primary': tab.key === currentTabKey,
               }"
-              @click.stop="router.push({ name: tab.name })"
+              @click.stop="router.push(tabToLocation(tab))"
             >
               <img :src="tab.icon" :alt="tab.label" class="size-4 rounded-sm object-contain" />
               <span class="text-sm">{{ tab.label }}</span>
@@ -203,9 +268,9 @@ onUnmounted(() => {
                 tabindex="0"
                 class="flex size-4 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-200 hover:text-slate-700"
                 @mousedown.stop
-                @click.stop="closeTab(tab.name)"
-                @keydown.enter.stop.prevent="closeTab(tab.name)"
-                @keydown.space.stop.prevent="closeTab(tab.name)"
+                @click.stop="closeTab(tab.key)"
+                @keydown.enter.stop.prevent="closeTab(tab.key)"
+                @keydown.space.stop.prevent="closeTab(tab.key)"
               >
                 <SvgIcon icon="ri:close-line" class="text-xs" />
               </span>

@@ -35,7 +35,7 @@ const miniPrograms = [
           v-for="app in appMenu"
           :key="app.name"
           @click.stop="router.push({ path: app.path })"
-          class="group cursor-pointer p-2 flex items-center gap-3 rounded-md border border-border bg-background text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-[0_12px_30px_rgba(113,150,206,0.14)]"
+          class="group cursor-pointer p-2 flex items-center gap-3 rounded-md border border-border bg-background text-left custom-hover"
         >
           <div
             class="size-12 flex shrink-0 items-center justify-center rounded-md bg-linear-to-br text-slate-700"

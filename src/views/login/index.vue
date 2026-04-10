@@ -101,6 +101,7 @@ const [password, passwordProps] = form.defineField("password");
 
 const switchLoginMethod = () => {
   const nextMethod = isOauthMode.value ? "password" : "oauth";
+  console.log("nextMethod", nextMethod);
   setLastLoginMethod(nextMethod);
 
   if (nextMethod === "oauth") {
@@ -112,6 +113,10 @@ const switchLoginMethod = () => {
 const handleSelectServer = (item: string) => {
   serverUrl.value = item;
   form.setFieldValue("serverUrl", item);
+};
+
+const handleRemoveerver = (item: string) => {
+  userStore.removeServerList(item);
 };
 
 const submitOauth = async () => {
@@ -151,7 +156,6 @@ const submitPassword = form.handleSubmit(async (values) => {
   try {
     setServerUrl(values.serverUrl);
     setRequestBaseURL(values.serverUrl);
-    console.log("Password 登陆", values);
 
     const { data } = await api.authLogin({
       authLoginRequest: {
@@ -159,8 +163,6 @@ const submitPassword = form.handleSubmit(async (values) => {
         password: values.password,
       },
     });
-
-    console.log("Password 登陆响应", data);
 
     setIsLogin(true);
     userStore.setAccessToken(data.access_token || "");
@@ -217,8 +219,15 @@ const submitPassword = form.handleSubmit(async (values) => {
                       v-for="item in serverList"
                       :key="item"
                       @click="handleSelectServer(item)"
+                      class="group flex items-center justify-between"
                     >
-                      {{ item }}
+                      <span>{{ item }}</span>
+                      <span class="cursor-pointer" @click.stop="handleRemoveerver(item)">
+                        <SvgIcon
+                          icon="radix-icons:cross-2"
+                          class="text-xs group-hover:text-red-500"
+                        />
+                      </span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

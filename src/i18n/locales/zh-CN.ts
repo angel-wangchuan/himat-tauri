@@ -3,6 +3,9 @@ export default {
     name: "HiMat",
     description: "生态创新平台",
   },
+  common: {
+    search: "搜索",
+  },
   login: {
     login: "登录",
     server_url: "服务器地址",

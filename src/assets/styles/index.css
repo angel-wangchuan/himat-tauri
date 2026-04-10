@@ -170,6 +170,8 @@
 
 @layer base {
   * {
+    user-select: none;
+    -webkit-user-select: none;
     @apply border-border outline-ring/50;
   }
   body {

@@ -3,6 +3,9 @@ export default {
     name: "HiMat",
     description: "Ecosystem Innovation Platform",
   },
+  common: {
+    search: "Search",
+  },
   login: {
     login: "Login",
     server_url: "Server URL",

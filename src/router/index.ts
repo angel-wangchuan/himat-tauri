@@ -50,6 +50,12 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: true },
       },
       {
+        path: "browser/:tabId",
+        name: "Browser",
+        component: () => import("@/views/browser/index.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
         path: "knowledge",
         name: "Knowledge",
         component: () => import("@/views/knowledge/index.vue"),
