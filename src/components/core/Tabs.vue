@@ -266,7 +266,7 @@ onUnmounted(() => {
               <span
                 role="button"
                 tabindex="0"
-                class="flex size-4 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-200 hover:text-slate-700"
+                class="flex size-4 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-200 hover:text-destructive"
                 @mousedown.stop
                 @click.stop="closeTab(tab.key)"
                 @keydown.enter.stop.prevent="closeTab(tab.key)"

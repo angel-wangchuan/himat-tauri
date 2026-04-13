@@ -119,4 +119,13 @@ export default {
       closeWindow: "Close Window",
     },
   },
+  miniapp: {
+    name: "AI App Center",
+    emptyHome: "No mini apps have been added to home yet",
+    menuItem: {
+      addHome: "Add to Home",
+      addedHome: "Already on Home",
+      hide: "Hide App",
+    },
+  },
 };

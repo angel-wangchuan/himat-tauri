@@ -1,7 +1,9 @@
 mod commands;
+mod proxy_plugin;
+mod proxy_server;
 mod tray;
 
-use tauri::WindowEvent;
+use tauri::{RunEvent, WindowEvent};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -17,10 +19,16 @@ pub fn run() {
             commands::open_external,
             commands::update_tray_tooltip,
             commands::update_native_menus,
+            proxy_plugin::get_local_proxy_addr,
+            proxy_plugin::set_proxy,
+            proxy_plugin::clear_proxy,
+            proxy_plugin::get_proxy,
+            proxy_plugin::get_proxy_status,
         ])
         .on_menu_event(tray::on_menu_event)
         .setup(|app| {
             tray::create(app.handle())?;
+            proxy_plugin::setup(app)?;
             Ok(())
         })
         .on_window_event(|window, event| {
@@ -29,6 +37,12 @@ pub fn run() {
                 let _ = window.hide();
             }
         })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|app, event| {
+            #[cfg(target_os = "macos")]
+            if let RunEvent::Reopen { .. } = event {
+                let _ = tray::show_main_window(app);
+            }
+        });
 }

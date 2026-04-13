@@ -8,11 +8,16 @@ export const useSettingsStore = defineStore(
   () => {
     const mode = ref<SettingsMode>("light");
 
-    const webviewProxy = ref<string>("http://127.0.0.1:7897");
+    const webviewProxy = ref<string>("");
+
+    function setWebviewProxy(proxy: string) {
+      webviewProxy.value = proxy;
+    }
 
     return {
       mode,
       webviewProxy,
+      setWebviewProxy,
     };
   },
   {

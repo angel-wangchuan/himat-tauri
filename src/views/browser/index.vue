@@ -1,11 +1,21 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { toast } from "vue-sonner";
 import { useRoute } from "vue-router";
 
 import { useTauri } from "@/composables/useTauri";
 import { router } from "@/router";
-import { useTabsStore } from "@/store/modules/tabs";
+import { useSettingsStore } from "@/store/modules/settings";
+import { useTabsStore, type BrowserTab } from "@/store/modules/tabs";
+import {
+  clearProxy,
+  getLocalProxyAddr,
+  getProxyStatus,
+  setProxy,
+  type ProxyStatus,
+} from "@/utils/proxy";
+import { resolveWebviewProxyUrl } from "@/utils/webviewProxy";
 
 type TauriWebview = {
   hide: () => Promise<void>;
@@ -29,12 +39,17 @@ type WebviewApi = {
 
 const route = useRoute();
 const tabsStore = useTabsStore();
+const settingsStore = useSettingsStore();
 const { isTauri } = useTauri();
+const { webviewProxy } = storeToRefs(settingsStore);
 
 const browserHostRef = ref<HTMLElement | null>(null);
 const isLoading = ref(false);
 const statusText = ref("准备打开网页...");
 const lastResolvedTab = ref<ReturnType<typeof tabsStore.getBrowserTabById>>();
+const localProxyUrl = ref("");
+const proxyStatus = ref<ProxyStatus | null>(null);
+const proxyStateByLabel = new Map<string, string>();
 
 let resizeObserver: ResizeObserver | null = null;
 let unlistenWindowResize: (() => void) | null = null;
@@ -49,7 +64,17 @@ const browserTab = computed(() => {
   return tabsStore.getBrowserTabById(tabId);
 });
 
-const proxyText = computed(() => browserTab.value?.proxyUrl || "未配置，当前页直连");
+const proxyFlowText = computed(() => {
+  if (!proxyStatus.value?.local_addr) {
+    return "请求链路: WebView -> 本地代理未就绪";
+  }
+
+  if (proxyStatus.value.mode === "upstream" && proxyStatus.value.upstream) {
+    return "请求链路: WebView -> 本地代理 -> 上游代理";
+  }
+
+  return "请求链路: WebView -> 本地代理 -> 直连目标网站";
+});
 
 function getWebviewApi() {
   if (!webviewApiPromise) {
@@ -97,10 +122,46 @@ async function syncWebviewBounds(webview: TauriWebview) {
   await webview.setSize(new LogicalSize(width, height));
 }
 
-async function createWebview() {
-  const tab = browserTab.value;
+function createDataStoreIdentifier(seed: string) {
+  const bytes = Array.from({ length: 16 }, () => 0);
+
+  for (let index = 0; index < seed.length; index += 1) {
+    const byteIndex = index % 16;
+    bytes[byteIndex] = (bytes[byteIndex] * 31 + seed.charCodeAt(index)) % 256;
+  }
+
+  return bytes;
+}
+
+function createProxyStateKey(url: string, upstreamProxyUrl?: string) {
+  return JSON.stringify({
+    url,
+    upstreamProxyUrl: upstreamProxyUrl || "",
+  });
+}
+
+async function ensureLocalProxyUrl() {
+  if (localProxyUrl.value) {
+    return localProxyUrl.value;
+  }
+
+  localProxyUrl.value = await getLocalProxyAddr();
+  return localProxyUrl.value;
+}
+
+async function syncBackendProxy(upstreamProxyUrl?: string) {
+  if (upstreamProxyUrl) {
+    await setProxy(upstreamProxyUrl);
+  } else {
+    await clearProxy();
+  }
+
+  proxyStatus.value = await getProxyStatus();
+}
+
+async function createWebview(tab: BrowserTab, localProxy: string) {
   const host = browserHostRef.value;
-  if (!tab || !host) {
+  if (!host) {
     return null;
   }
 
@@ -117,7 +178,8 @@ async function createWebview() {
       width,
       height,
       focus: true,
-      proxyUrl: tab.proxyUrl || undefined,
+      proxyUrl: localProxy,
+      dataStoreIdentifier: createDataStoreIdentifier(`browser:${tab.id}:${tab.webviewLabel}`),
     });
 
     void webview.once("tauri://created", () => resolve(webview));
@@ -128,7 +190,7 @@ async function createWebview() {
 }
 
 async function showCurrentTabWebview() {
-  const tab = browserTab.value;
+  let tab = browserTab.value;
   if (!tab) {
     await router.replace({ name: "Apps" });
     return;
@@ -150,18 +212,47 @@ async function showCurrentTabWebview() {
   statusText.value = "正在打开网页...";
 
   try {
-    const existingWebview = await getWebviewByLabel(tab.webviewLabel);
-    const webview = existingWebview || (await createWebview());
+    const { proxyUrl: upstreamProxyUrl, error } = resolveWebviewProxyUrl(webviewProxy.value);
+    const localProxy = await ensureLocalProxyUrl();
+    await syncBackendProxy(upstreamProxyUrl);
+
+    if (error) {
+      toast.info(`${error}，当前将按直连模式通过本地代理打开`);
+    }
+
+    if (tab.proxyUrl !== localProxy) {
+      tab.proxyUrl = localProxy;
+    }
+
+    const nextStateKey = createProxyStateKey(tab.url, upstreamProxyUrl);
+    let existingWebview = await getWebviewByLabel(tab.webviewLabel);
+
+    if (existingWebview && proxyStateByLabel.get(tab.webviewLabel) !== nextStateKey) {
+      const previousLabel = tab.webviewLabel;
+      await existingWebview.close();
+      proxyStateByLabel.delete(previousLabel);
+      tab = tabsStore.refreshBrowserTabWebview(tab.id) || tab;
+      lastResolvedTab.value = tab;
+      existingWebview = await getWebviewByLabel(tab.webviewLabel);
+    }
+
+    const webview = existingWebview || (await createWebview(tab, localProxy));
     if (!webview) {
       return;
     }
 
+    proxyStateByLabel.set(tab.webviewLabel, nextStateKey);
     await syncWebviewBounds(webview);
     await webview.show();
     await webview.setFocus();
     statusText.value = "";
   } catch (error) {
-    const message = error instanceof Error ? error.message : "打开网页失败";
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === "string"
+          ? error
+          : JSON.stringify(error);
     statusText.value = message;
     toast.error(message);
   } finally {
@@ -183,8 +274,15 @@ async function syncActiveWebview() {
 }
 
 watch(
-  () => route.params.tabId,
-  async (nextTabId, previousTabId) => {
+  () => ({
+    tabId: route.params.tabId,
+    url: browserTab.value?.url,
+    settingsProxyUrl: webviewProxy.value,
+  }),
+  async (nextState, previousState) => {
+    const nextTabId = nextState.tabId;
+    const previousTabId = previousState?.tabId;
+
     if (typeof previousTabId === "string" && previousTabId !== nextTabId) {
       const previousTab = tabsStore.getBrowserTabById(previousTabId);
       await hideTabWebview(previousTab);
@@ -204,6 +302,8 @@ onMounted(async () => {
   }
 
   if (isTauri.value) {
+    proxyStatus.value = await getProxyStatus().catch(() => null);
+
     const { getCurrentWindow } = await import("@tauri-apps/api/window");
     const appWindow = getCurrentWindow();
     unlistenWindowResize = await appWindow.onResized(() => {
@@ -221,6 +321,21 @@ onUnmounted(() => {
 
 <template>
   <div class="custom-box flex min-h-0 flex-col gap-3 overflow-hidden">
+    <!-- <div
+      v-if="proxyStatus"
+      class="flex flex-wrap items-center gap-2 px-3 pt-3 text-xs text-muted-foreground"
+    >
+      <span class="rounded-full border px-2 py-1">
+        {{ proxyFlowText }}
+      </span>
+      <span class="rounded-full border px-2 py-1">
+        本地代理: {{ proxyStatus.local_addr || "未就绪" }}
+      </span>
+      <span class="rounded-full border px-2 py-1">
+        上游代理: {{ proxyStatus.upstream || "无" }}
+      </span>
+    </div> -->
+
     <div ref="browserHostRef" class="relative min-h-0 flex-1 overflow-hidden rounded-xl border">
       <iframe
         v-if="!isTauri && browserTab"

@@ -5,15 +5,25 @@ import { toast } from "vue-sonner";
 import { useUserStore } from "@stores/user";
 
 const configuration = new Configuration({
+  basePath: "",
   accessToken: () => useUserStore().accessToken || "",
 });
 
 const axiosInstance = axios.create();
 
-function syncRequestConfig() {
-  const userStore = useUserStore();
-  configuration.basePath = userStore.serverUrl;
-  configuration.accessToken = userStore.accessToken || "";
+function syncRequestConfig(config?: any) {
+  const { serverUrl, accessToken } = useUserStore();
+  configuration.basePath = serverUrl;
+  configuration.accessToken = accessToken || "";
+  if (config) {
+    config.baseURL = serverUrl;
+    if (accessToken) {
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${accessToken}`,
+      };
+    }
+  }
 }
 
 export function setRequestBaseURL(baseURL?: string) {
@@ -23,7 +33,7 @@ export function setRequestBaseURL(baseURL?: string) {
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    syncRequestConfig();
+    syncRequestConfig(config);
     return config;
   },
   (error) => Promise.reject(error),

@@ -118,4 +118,13 @@ export default {
       closeWindow: "关闭窗口",
     },
   },
+  miniapp: {
+    name: "AI应用中心",
+    emptyHome: "还没有添加到首页的小程序",
+    menuItem: {
+      addHome: "添加到首页",
+      addedHome: "已在首页",
+      hide: "隐藏应用",
+    },
+  },
 };

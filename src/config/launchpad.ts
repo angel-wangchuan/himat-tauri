@@ -9,7 +9,7 @@ import codeIcon from "@imgs/launchpad/code.png";
 import filesIcon from "@imgs/launchpad/files.png";
 import knowledgeIcon from "@imgs/launchpad/knowledge.png";
 import notesIcon from "@imgs/launchpad/notes.png";
-import openclawIcon from "@imgs/launchpad/openclaw.png";
+// import openclawIcon from "@imgs/launchpad/openclaw.png";
 import painting from "@imgs/launchpad/painting.png";
 import storeIcon from "@imgs/launchpad/store.png";
 import translateIcon from "@imgs/launchpad/translate.png";

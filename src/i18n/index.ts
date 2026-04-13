@@ -66,12 +66,11 @@ function getNativeMenuLabels(locale: AppLocale): NativeMenuLabels {
 export async function syncNativeMenus(locale: AppLocale = getLocale()): Promise<void> {
   document.documentElement.lang = locale;
 
-  if (typeof window === "undefined" || !("__TAURI_INTERNALS__" in window)) {
+  if (!isTauriEnvironment()) {
     return;
   }
 
-  const { invoke } = await import("@tauri-apps/api/core");
-  await invoke("update_native_menus", { labels: getNativeMenuLabels(locale) });
+  await tauriInvoke("update_native_menus", { labels: getNativeMenuLabels(locale) });
 }
 
 export function setLocale(locale: AppLocale): void {
@@ -83,3 +82,4 @@ export function setLocale(locale: AppLocale): void {
 export function getLocale(): AppLocale {
   return i18n.global.locale.value as AppLocale;
 }
+import { isTauriEnvironment, tauriInvoke } from "@/utils/tauri";

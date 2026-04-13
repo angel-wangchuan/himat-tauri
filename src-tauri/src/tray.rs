@@ -110,12 +110,7 @@ pub fn update_native_menus(app: &AppHandle, labels: NativeMenuLabels) -> tauri::
 pub fn on_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
     match event.id().as_ref() {
         "show" => {
-            if let Some(w) = app.get_webview_window("main") {
-                let _ = w.show();
-                #[cfg(target_os = "macos")]
-                let _ = w.unminimize();
-                let _ = w.set_focus();
-            }
+            let _ = show_main_window(app);
         }
         "hide" => {
             if let Some(w) = app.get_webview_window("main") {
@@ -123,10 +118,10 @@ pub fn on_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
             }
         }
         "settings" => {
-            if let Some(w) = app.get_webview_window("main") {
-                let _ = w.show();
-                let _ = w.set_focus();
-                let _ = w.emit("navigate", "settings");
+            if show_main_window(app).is_ok() {
+                if let Some(w) = app.get_webview_window("main") {
+                    let _ = w.emit("navigate", "settings");
+                }
             }
         }
         "quit" => {
@@ -134,6 +129,17 @@ pub fn on_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
         }
         _ => {}
     }
+}
+
+pub fn show_main_window(app: &AppHandle) -> tauri::Result<()> {
+    if let Some(w) = app.get_webview_window("main") {
+        w.show()?;
+        #[cfg(target_os = "macos")]
+        w.unminimize()?;
+        w.set_focus()?;
+    }
+
+    Ok(())
 }
 
 fn build_tray_menu(app: &AppHandle, labels: &NativeMenuLabels) -> tauri::Result<Menu<tauri::Wry>> {
@@ -221,12 +227,7 @@ fn on_tray_event(tray: &tauri::tray::TrayIcon, event: TrayIconEvent) {
     {
         if button == MouseButton::Left && button_state == MouseButtonState::Down {
             let app = tray.app_handle();
-            if let Some(w) = app.get_webview_window("main") {
-                let _ = w.show();
-                #[cfg(target_os = "macos")]
-                let _ = w.unminimize();
-                let _ = w.set_focus();
-            }
+            let _ = show_main_window(&app);
         }
     }
 }

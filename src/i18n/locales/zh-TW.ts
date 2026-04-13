@@ -119,4 +119,14 @@ export default {
       closeWindow: "關閉視窗",
     },
   },
+
+  miniapp: {
+    name: "AI應用中心",
+    emptyHome: "還沒有添加到首頁的小程序",
+    menuItem: {
+      addHome: "添加到首頁",
+      addedHome: "已在首頁",
+      hide: "隱藏應用",
+    },
+  },
 };

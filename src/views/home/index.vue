@@ -1,29 +1,16 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { storeToRefs } from "pinia";
 
-import { useUserStore } from "@/store/modules/user";
 import { router } from "@/router";
 import { getAppMenu } from "@/config/launchpad";
-
-const userStore = useUserStore();
-const { serverUrl } = storeToRefs(userStore);
+import { useMiniApps } from "@/composables/useMiniApps";
 
 const appMenu = computed(() => getAppMenu());
+const { homeApps, loadMiniApps, openMiniApp } = useMiniApps();
 
-const miniPrograms = [
-  { title: "Reaxys", icon: "ri:planet-line" },
-  { title: "在线文献检索", icon: "ri:earth-line" },
-  { title: "WOS", icon: "ri:pie-chart-2-line" },
-  { title: "PubMed", icon: "ri:hospital-line" },
-  { title: "CNKI", icon: "ri:book-2-line" },
-  { title: "专利查询", icon: "ri:search-eye-line" },
-  { title: "图书馆资源", icon: "ri:building-line" },
-  { title: "ITIC-SCI", icon: "ri:global-line" },
-  { title: "邮箱", icon: "ri:mail-line" },
-  { title: "合成参数预测模型", icon: "ri:test-tube-line" },
-  { title: "MAIC 算力集群", icon: "ri:cloud-line" },
-];
+onMounted(() => {
+  void loadMiniApps();
+});
 </script>
 
 <template>
@@ -59,18 +46,26 @@ const miniPrograms = [
           class="mt-5 grid grid-cols-2 gap-x-6 gap-y-7 sm:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10"
         >
           <div
-            v-for="item in miniPrograms"
-            :key="item.title"
+            v-for="item in homeApps"
+            :key="item.id"
             type="button"
             class="group flex flex-col items-center rounded-[20px] px-3 py-4 transition-all hover:-translate-y-0.5 cursor-pointer"
+            @click="openMiniApp(item)"
           >
             <div
               class="flex h-16 w-16 items-center justify-center rounded-[22px] bg-white shadow-sm ring-1 ring-slate-200/60"
             >
-              <SvgIcon :icon="item.icon" class="text-4xl text-sky-500" />
+              <img :src="item.logo" :alt="item.name" class="size-12 rounded-[16px] object-cover" />
             </div>
-            <p class="mt-3 text-center text-sm font-medium text-foreground">{{ item.title }}</p>
+            <p class="mt-3 text-center text-sm font-medium text-foreground">{{ item.name }}</p>
           </div>
+        </div>
+
+        <div
+          v-if="homeApps.length === 0"
+          class="mt-5 rounded-xl border border-dashed border-border bg-background px-4 py-8 text-center text-sm text-muted-foreground"
+        >
+          {{ $t("miniapp.emptyHome") }}
         </div>
       </div>
     </section>

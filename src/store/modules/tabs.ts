@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
+import { resolveWebviewProxyUrl } from "@/utils/webviewProxy";
+
 export interface BrowserTab {
   id: string;
   key: string;
@@ -23,8 +25,8 @@ export function createBrowserTabKey(id: string) {
   return `browser:${id}`;
 }
 
-function createBrowserWebviewLabel(id: string) {
-  return `browser-webview-${id}`;
+function createBrowserWebviewLabel(id: string, version = 0) {
+  return `browser-webview-${id}-${version}`;
 }
 
 export const useTabsStore = defineStore(
@@ -47,9 +49,29 @@ export const useTabsStore = defineStore(
       return browserTabs.value.find((tab) => tab.key === key);
     }
 
+    function refreshBrowserTabWebview(id: string) {
+      const tab = getBrowserTabById(id);
+      if (!tab) {
+        return undefined;
+      }
+
+      tab.webviewLabel = createBrowserWebviewLabel(id, Date.now());
+      return tab;
+    }
+
     function openBrowserTab(payload: OpenBrowserTabPayload) {
       const normalizedUrl = payload.url.trim();
-      const normalizedProxyUrl = payload.proxyUrl?.trim() || undefined;
+      const { proxyUrl: normalizedProxyUrl } = resolveWebviewProxyUrl(payload.proxyUrl);
+      const existingTab = browserTabs.value.find((tab) => tab.id === payload.id);
+
+      if (existingTab) {
+        existingTab.label = payload.label;
+        existingTab.icon = payload.icon;
+        existingTab.url = normalizedUrl;
+        existingTab.proxyUrl = normalizedProxyUrl;
+        ensureTab(existingTab.key);
+        return existingTab;
+      }
 
       const tab: BrowserTab = {
         id: payload.id,
@@ -60,7 +82,6 @@ export const useTabsStore = defineStore(
         webviewLabel: createBrowserWebviewLabel(payload.id),
         proxyUrl: normalizedProxyUrl,
       };
-
       browserTabs.value.push(tab);
       ensureTab(tab.key);
       return tab;
@@ -77,6 +98,7 @@ export const useTabsStore = defineStore(
       ensureTab,
       getBrowserTabById,
       getBrowserTabByKey,
+      refreshBrowserTabWebview,
       openBrowserTab,
       closeTab,
     };
