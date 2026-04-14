@@ -61,6 +61,18 @@ export default {
     },
     about: {
       title: "關於",
+      description: "一款為創造者而生的 AI 助手",
+      updates: {
+        check: "檢查更新",
+        checking: "正在檢查更新...",
+        upToDate: "當前已是最新版本",
+        updateAvailable: "發現新版本 {version}",
+        downloading: "正在下載更新...",
+        installing: "正在安裝更新...",
+        restart: "重新啟動以套用更新",
+        error: "檢查更新失敗",
+        noUpdate: "暫無更新",
+      },
     },
   },
   chat: {
@@ -94,6 +106,18 @@ export default {
       homeTag: "首頁",
       emptyVisible: "暫無顯示中的小程式",
       emptyHidden: "暫無隱藏的小程式",
+    },
+    toast: {
+      proxyError: "，當前將按直連開啟",
+      alreadyOnHome: "該應用已在首頁",
+      addedToHome: "已將 {name} 新增到首頁",
+      notOnHome: "該應用不在首頁",
+      removedFromHome: "已將 {name} 從首頁移除",
+      hidden: "已隱藏 {name}",
+      shown: "已顯示 {name}",
+      swapped: "已交換顯示與隱藏的小程式",
+      reset: "已重設小程式顯示設定",
+      loadFailed: "載入小程式列表失敗",
     },
   },
   knowledge: {

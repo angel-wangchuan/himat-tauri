@@ -37,6 +37,8 @@ type WebviewApi = {
   hostWindow: unknown;
 };
 
+let webviewApiPromise: Promise<WebviewApi> | null = null;
+
 const route = useRoute();
 const tabsStore = useTabsStore();
 const settingsStore = useSettingsStore();
@@ -53,7 +55,6 @@ const proxyStateByLabel = new Map<string, string>();
 
 let resizeObserver: ResizeObserver | null = null;
 let unlistenWindowResize: (() => void) | null = null;
-let webviewApiPromise: Promise<WebviewApi> | null = null;
 
 const browserTab = computed(() => {
   const { tabId } = route.params;
@@ -64,17 +65,18 @@ const browserTab = computed(() => {
   return tabsStore.getBrowserTabById(tabId);
 });
 
-const proxyFlowText = computed(() => {
-  if (!proxyStatus.value?.local_addr) {
-    return "请求链路: WebView -> 本地代理未就绪";
-  }
+// 不能删除下面的函数，调试会使用到它
+// const proxyFlowText = computed(() => {
+//   if (!proxyStatus.value?.local_addr) {
+//     return "请求链路: WebView -> 本地代理未就绪";
+//   }
 
-  if (proxyStatus.value.mode === "upstream" && proxyStatus.value.upstream) {
-    return "请求链路: WebView -> 本地代理 -> 上游代理";
-  }
+//   if (proxyStatus.value.mode === "upstream" && proxyStatus.value.upstream) {
+//     return "请求链路: WebView -> 本地代理 -> 上游代理";
+//   }
 
-  return "请求链路: WebView -> 本地代理 -> 直连目标网站";
-});
+//   return "请求链路: WebView -> 本地代理 -> 直连目标网站";
+// });
 
 function getWebviewApi() {
   if (!webviewApiPromise) {
@@ -83,9 +85,9 @@ function getWebviewApi() {
       import("@tauri-apps/api/dpi"),
       import("@tauri-apps/api/window"),
     ]).then(([webviewModule, dpiModule, windowModule]) => ({
-      Webview: webviewModule.Webview,
-      LogicalPosition: dpiModule.LogicalPosition,
-      LogicalSize: dpiModule.LogicalSize,
+      Webview: webviewModule.Webview as any,
+      LogicalPosition: dpiModule.LogicalPosition as any,
+      LogicalSize: dpiModule.LogicalSize as any,
       hostWindow: windowModule.getCurrentWindow(),
     }));
   }
@@ -94,8 +96,9 @@ function getWebviewApi() {
 }
 
 async function getWebviewByLabel(label: string) {
-  const { Webview } = await getWebviewApi();
-  return Webview.getByLabel(label);
+  const api = await getWebviewApi();
+  if (!api) return null;
+  return api.Webview.getByLabel(label);
 }
 
 async function hideTabWebview(tab = browserTab.value) {
@@ -116,10 +119,11 @@ async function syncWebviewBounds(webview: TauriWebview) {
   const rect = host.getBoundingClientRect();
   const width = Math.max(rect.width, 1);
   const height = Math.max(rect.height, 1);
-  const { LogicalPosition, LogicalSize } = await getWebviewApi();
+  const api = await getWebviewApi();
+  if (!api) return;
 
-  await webview.setPosition(new LogicalPosition(rect.left, rect.top));
-  await webview.setSize(new LogicalSize(width, height));
+  await webview.setPosition(new api.LogicalPosition(rect.left, rect.top));
+  await webview.setSize(new api.LogicalSize(width, height));
 }
 
 function createDataStoreIdentifier(seed: string) {
@@ -168,10 +172,11 @@ async function createWebview(tab: BrowserTab, localProxy: string) {
   const rect = host.getBoundingClientRect();
   const width = Math.max(rect.width, 1);
   const height = Math.max(rect.height, 1);
-  const { Webview, hostWindow } = await getWebviewApi();
+  const api = await getWebviewApi();
+  if (!api) return null;
 
   return await new Promise<TauriWebview>((resolve, reject) => {
-    const webview = new Webview(hostWindow, tab.webviewLabel, {
+    const webview = new api.Webview(api.hostWindow, tab.webviewLabel, {
       url: tab.url,
       x: rect.left,
       y: rect.top,
@@ -183,7 +188,7 @@ async function createWebview(tab: BrowserTab, localProxy: string) {
     });
 
     void webview.once("tauri://created", () => resolve(webview));
-    void webview.once("tauri://error", (event) => {
+    void webview.once("tauri://error", (event: { payload?: string }) => {
       reject(new Error(event.payload || "创建网页视图失败"));
     });
   });

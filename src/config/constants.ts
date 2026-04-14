@@ -20,6 +20,16 @@ export const DEFAULT_SERVERS = [
  */
 export const LOCAL_SERVER_URL = "http://localhost:3670";
 
+/**
+ * OAuth 认证路径
+ */
+export const OAUTH_PATH = "/auth/casdoor?client=desktop";
+
+/**
+ * 官方网站地址
+ */
+export const OFFICIAL_WEBSITE_URL = "https://himat.wiat.ac.cn";
+
 // ==================== 时间配置 ====================
 
 /**
@@ -131,11 +141,6 @@ export const BROWSER_ROUTE_NAME = "Browser";
  * 设置路由名称
  */
 export const SETTINGS_ROUTE_NAME = "Settings";
-
-/**
- * OAuth 认证路径
- */
-export const OAUTH_PATH = "/auth/casdoor?client=desktop";
 
 // ==================== 代理配置 ====================
 

@@ -61,6 +61,18 @@ export default {
     },
     about: {
       title: "About",
+      description: "An AI assistant built for creators",
+      updates: {
+        check: "Check for Updates",
+        checking: "Checking for updates...",
+        upToDate: "You are using the latest version",
+        updateAvailable: "New version {version} available",
+        downloading: "Downloading update...",
+        installing: "Installing update...",
+        restart: "Restart to Apply Update",
+        error: "Failed to check for updates",
+        noUpdate: "No updates available",
+      },
     },
   },
   chat: {
@@ -94,6 +106,18 @@ export default {
       homeTag: "Home",
       emptyVisible: "No visible mini apps",
       emptyHidden: "No hidden mini apps",
+    },
+    toast: {
+      proxyError: ", will open with direct connection",
+      alreadyOnHome: "This app is already on Home",
+      addedToHome: "Added {name} to Home",
+      notOnHome: "This app is not on Home",
+      removedFromHome: "Removed {name} from Home",
+      hidden: "Hidden {name}",
+      shown: "Shown {name}",
+      swapped: "Swapped visible and hidden mini apps",
+      reset: "Reset mini app display settings",
+      loadFailed: "Failed to load mini apps list",
     },
   },
   knowledge: {

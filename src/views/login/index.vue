@@ -5,8 +5,9 @@ import BackgroundLight from "@imgs/login/background-light.png";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { storeToRefs } from "pinia";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import * as z from "zod";
+import { useRouter } from "vue-router";
 
 import { useTauri } from "@/composables/useTauri";
 import { usePreferredDark } from "@vueuse/core";
@@ -175,7 +176,24 @@ const submitPassword = form.handleSubmit(async (values) => {
     setIsLogin(true);
     userStore.setAccessToken(data.access_token || "");
     userStore.setRefreshToken(data.refresh_token || "");
-    userStore.setUser(data.user || {});
+    
+    // 转换 SDK User 类型为本地 User 类型
+    const sdkUser = data.user;
+    if (sdkUser) {
+      userStore.setUser({
+        id: sdkUser.id,
+        username: sdkUser.username,
+        email: sdkUser.email,
+        phone: sdkUser.mobile,
+        nickname: sdkUser.nickname,
+        avatar: sdkUser.avatar,
+        createdAt: sdkUser.createdAt,
+        updatedAt: sdkUser.updatedAt,
+        roles: sdkUser.roles?.map((role) => role.name) || [],
+      });
+    } else {
+      userStore.setUser(undefined);
+    }
 
     await router.push({ name: HOME_ROUTE_NAME });
   } finally {

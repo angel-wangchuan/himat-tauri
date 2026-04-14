@@ -7,6 +7,7 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { toast } from "vue-sonner";
+import { useI18n } from "vue-i18n";
 
 import { PROVIDER_LOGOS } from "@/config/minapps";
 import { useMiniAppsStore, type MiniApp } from "@/store/modules/miniapps";
@@ -42,6 +43,7 @@ function normalizeMiniApp(rawApp: any, serverUrl?: string): MiniApp {
  * ```
  */
 export function useMiniAppsData() {
+  const { t } = useI18n();
   const miniAppsStore = useMiniAppsStore();
   const userStore = useUserStore();
 
@@ -67,7 +69,7 @@ export function useMiniAppsData() {
       miniAppsStore.setApps(data.map((item: any) => normalizeMiniApp(item, userStore.serverUrl)));
     } catch (error) {
       console.error("Failed to fetch apps list:", error);
-      toast.error("加载小程序列表失败");
+      toast.error(t("miniapp.toast.loadFailed"));
     } finally {
       loading.value = false;
     }

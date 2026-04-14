@@ -7,6 +7,12 @@ pub fn get_platform() -> String {
 }
 
 #[tauri::command]
+pub fn get_app_version(app: tauri::AppHandle) -> Result<String, String> {
+    let package = app.package_info();
+    Ok(package.version.to_string())
+}
+
+#[tauri::command]
 pub fn open_external(app: tauri::AppHandle, url: String) -> Result<(), String> {
     app.opener()
         .open_url(url, None::<&str>)

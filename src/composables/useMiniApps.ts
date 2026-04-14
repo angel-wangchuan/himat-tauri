@@ -26,7 +26,7 @@ import { useMiniAppsActions } from "./miniApps/useMiniAppsActions";
  */
 export function useMiniApps() {
   const miniAppsStore = useMiniAppsStore();
-  const { apps, hiddenAppIds, homeAppIds, loaded } = storeToRefs(miniAppsStore);
+  const { apps, hiddenAppIds } = storeToRefs(miniAppsStore);
 
   // 数据管理
   const data = useMiniAppsData();

@@ -4,9 +4,10 @@
  * 职责：提供小程序的业务操作（打开、添加到首页、显示/隐藏等）
  */
 
-import { computed, type Ref } from "vue";
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { toast } from "vue-sonner";
+import { useI18n } from "vue-i18n";
 
 import { router } from "@/router";
 import { useMiniAppsStore, type MiniApp } from "@/store/modules/miniapps";
@@ -25,6 +26,7 @@ import { BROWSER_ROUTE_NAME, MINIAPP_ID_PREFIX } from "@/config/constants";
  * ```
  */
 export function useMiniAppsActions() {
+  const { t } = useI18n();
   const miniAppsStore = useMiniAppsStore();
   const tabsStore = useTabsStore();
   const settingsStore = useSettingsStore();
@@ -53,7 +55,7 @@ export function useMiniAppsActions() {
     const { proxyUrl, error } = resolveWebviewProxyUrl(webviewProxy.value);
 
     if (error) {
-      toast.info(`${error}，当前将按直连打开`);
+      toast.info(`${error}${t("miniapp.toast.proxyError")}`);
     }
 
     const browserTab = tabsStore.openBrowserTab({
@@ -77,12 +79,12 @@ export function useMiniAppsActions() {
    */
   function addMiniAppToHome(app: MiniApp) {
     if (miniAppsStore.isHomeApp(app.id)) {
-      toast.info("该应用已在首页");
+      toast.info(t("miniapp.toast.alreadyOnHome"));
       return;
     }
 
     miniAppsStore.addToHome(app.id);
-    toast.success(`已将 ${app.name} 添加到首页`);
+    toast.success(t("miniapp.toast.addedToHome", { name: app.name }));
   }
 
   /**
@@ -93,12 +95,12 @@ export function useMiniAppsActions() {
    */
   function removeMiniAppFromHome(app: MiniApp) {
     if (!miniAppsStore.isHomeApp(app.id)) {
-      toast.info("该应用不在首页");
+      toast.info(t("miniapp.toast.notOnHome"));
       return;
     }
 
     miniAppsStore.removeFromHome(app.id);
-    toast.success(`已将 ${app.name} 从首页移除`);
+    toast.success(t("miniapp.toast.removedFromHome", { name: app.name }));
   }
 
   /**
@@ -112,7 +114,7 @@ export function useMiniAppsActions() {
     }
 
     miniAppsStore.hideApp(app.id);
-    toast.success(`已隐藏 ${app.name}`);
+    toast.success(t("miniapp.toast.hidden", { name: app.name }));
   }
 
   /**
@@ -126,7 +128,7 @@ export function useMiniAppsActions() {
     }
 
     miniAppsStore.showApp(app.id);
-    toast.success(`已显示 ${app.name}`);
+    toast.success(t("miniapp.toast.shown", { name: app.name }));
   }
 
   /**
@@ -138,7 +140,7 @@ export function useMiniAppsActions() {
     const visibleApps = apps.value.filter((item) => !hiddenAppIds.value.includes(item.id));
     const nextHiddenIds = visibleApps.map((item) => item.id);
     miniAppsStore.setHiddenAppIds(nextHiddenIds);
-    toast.success("已交换显示与隐藏的小程序");
+    toast.success(t("miniapp.toast.swapped"));
   }
 
   /**
@@ -148,7 +150,7 @@ export function useMiniAppsActions() {
    */
   function resetMiniAppVisibility() {
     miniAppsStore.resetHiddenApps();
-    toast.success("已重置小程序显示设置");
+    toast.success(t("miniapp.toast.reset"));
   }
 
   /**

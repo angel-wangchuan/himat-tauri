@@ -83,14 +83,3 @@ export function applyThemeMode(mode: ThemeMode) {
 
   // 注意：不再写入 localStorage，由 Pinia persist 插件统一管理
 }
-
-/**
- * 从存储中读取主题设置并应用
- *
- * @deprecated 此函数已废弃，主题设置应由 Pinia store 管理
- * 保留此函数仅用于向后兼容
- */
-export function applyStoredThemeSettings() {
-  console.warn("[Deprecated] applyStoredThemeSettings is deprecated. Use Pinia store instead.");
-  // 此函数已废弃，主题设置应由 Pinia store 管理
-}
