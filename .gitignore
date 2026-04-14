@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 
-src/types/import/*.d.ts
+optimization
 
 # Editor directories and files
 .vscode/*

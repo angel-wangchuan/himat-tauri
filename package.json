@@ -8,7 +8,8 @@
     "build": "vue-tsc --noEmit && vp build",
     "preview": "vp preview",
     "tauri": "tauri",
-    "sdk": "pnpm add ../himat-api-sdk"
+    "sdk": "pnpm add ../himat-api-sdk",
+    "sync-i18n": "node scripts/sync-i18n.mjs"
   },
   "dependencies": {
     "@himat/api-sdk": "link:../himat-api-sdk",

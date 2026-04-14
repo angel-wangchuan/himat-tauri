@@ -11,6 +11,7 @@ import { AppLogo } from "@/config/env";
 import { getAppMenu } from "@/config/launchpad";
 
 import { createBrowserTabKey, useTabsStore } from "@/store/modules/tabs";
+import { BROWSER_ROUTE_NAME, HOME_ROUTE_NAME, SETTINGS_ROUTE_NAME } from "@/config/constants";
 
 defineOptions({ name: "Tabs", inheritAttrs: false });
 
@@ -52,7 +53,7 @@ const dynamicTabCatalog = computed(() =>
       tab.key,
       {
         key: tab.key,
-        routeName: "Browser",
+        routeName: BROWSER_ROUTE_NAME,
         routeParams: { tabId: tab.id },
         label: tab.label,
         icon: tab.icon,
@@ -86,7 +87,7 @@ const unlistenResize = ref<null | (() => void)>(null);
 const showTrafficLightsSpacer = computed(() => platform.value === "macos" && !isFullscreen.value);
 
 const currentTabKey = computed(() => {
-  if (route.name === "Browser" && typeof route.params.tabId === "string") {
+  if (route.name === BROWSER_ROUTE_NAME && typeof route.params.tabId === "string") {
     return createBrowserTabKey(route.params.tabId);
   }
 
@@ -168,13 +169,13 @@ const closeTab = async (tabKey: string) => {
 
   const fallbackName = nextTabs[currentIndex] || nextTabs[currentIndex - 1];
   if (!fallbackName) {
-    await router.push({ name: "Home" });
+    await router.push({ name: HOME_ROUTE_NAME });
     return;
   }
 
   const fallbackTab = tabCatalog.value[fallbackName] as TabEntry | undefined;
   if (!fallbackTab) {
-    await router.push({ name: "Home" });
+    await router.push({ name: HOME_ROUTE_NAME });
     return;
   }
 
@@ -283,10 +284,10 @@ onUnmounted(() => {
         variant="ghost"
         class="size-6.5 flex shrink-0 hover:bg-background hover:text-primary"
         :class="{
-          'bg-background text-primary': route.name === 'Home',
+          'bg-background text-primary': route.name === HOME_ROUTE_NAME,
         }"
         @mousedown.stop
-        @click="router.push({ name: 'Home' })"
+        @click="router.push({ name: HOME_ROUTE_NAME })"
       >
         <SvgIcon icon="ri:add-line" />
       </Button>
@@ -297,10 +298,10 @@ onUnmounted(() => {
         variant="ghost"
         class="size-6.5 flex shrink-0 hover:bg-background hover:text-primary"
         :class="{
-          'bg-background text-primary': route.name === 'Settings',
+          'bg-background text-primary': route.name === SETTINGS_ROUTE_NAME,
         }"
         @mousedown.stop
-        @click="router.push({ name: 'Settings' })"
+        @click="router.push({ name: SETTINGS_ROUTE_NAME })"
       >
         <SvgIcon icon="ri:settings-line" />
       </Button>

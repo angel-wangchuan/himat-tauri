@@ -1,135 +1,94 @@
+/**
+ * 路由配置主文件
+ *
+ * 负责：
+ * - 路由实例创建
+ * - 路由守卫注册
+ * - 模块化路由汇总
+ */
+
 import { App } from "vue";
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 import { storeToRefs } from "pinia";
 
 import { store } from "@/store";
 import { useUserStore } from "@/store/modules/user";
+import { featureRoutes } from "./modules/features";
+import { settingsRoutes } from "./modules/settings";
+import { LOGIN_ROUTE_NAME, HOME_ROUTE_NAME } from "@/config/constants";
 
-const routes: RouteRecordRaw[] = [
-  {
-    path: "/",
-    name: "Index",
-    component: () => import("@/views/index/index.vue"),
-    redirect: { name: "Home" },
-    meta: { requiresAuth: true },
-    children: [
-      {
-        path: "home",
-        name: "Home",
-        component: () => import("@/views/home/index.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "settings",
-        name: "Settings",
-        component: () => import("@/views/settings/index.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "chat",
-        name: "Chat",
-        component: () => import("@/views/chat/index.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "chatStore",
-        name: "ChatStore",
-        component: () => import("@/views/chat/store.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "agent",
-        name: "Agent",
-        component: () => import("@/views/agent/index.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "apps",
-        name: "Apps",
-        component: () => import("@/views/apps/index.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "browser/:tabId",
-        name: "Browser",
-        component: () => import("@/views/browser/index.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "knowledge",
-        name: "Knowledge",
-        component: () => import("@/views/knowledge/index.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "drawing",
-        name: "Drawing",
-        component: () => import("@/views/drawing/index.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "translate",
-        name: "Translate",
-        component: () => import("@/views/translate/index.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "files",
-        name: "Files",
-        component: () => import("@/views/files/index.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "code",
-        name: "Code",
-        component: () => import("@/views/code/index.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "notes",
-        name: "Notes",
-        component: () => import("@/views/notes/index.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "workflow",
-        name: "Workflow",
-        component: () => import("@/views/workflow/index.vue"),
-        meta: { requiresAuth: true },
-      },
-    ],
-  },
+// ==================== 路由配置 ====================
+
+/**
+ * 主布局路由（需要认证）
+ */
+const mainLayoutRoute: RouteRecordRaw = {
+  path: "/",
+  name: "Index",
+  component: () => import("@/views/index/index.vue"),
+  redirect: { name: HOME_ROUTE_NAME },
+  meta: { requiresAuth: true },
+  children: [...featureRoutes, ...settingsRoutes],
+};
+
+/**
+ * 认证路由（仅访客可访问）
+ */
+const authRoutes: RouteRecordRaw[] = [
   {
     path: "/login",
-    name: "Login",
+    name: LOGIN_ROUTE_NAME,
     component: () => import("@/views/login/index.vue"),
-    meta: { guestOnly: true },
+    meta: { guestOnly: true, title: "登录" },
   },
 ];
 
-// 创建路由实例
+/**
+ * 所有路由
+ */
+const routes: RouteRecordRaw[] = [mainLayoutRoute, ...authRoutes];
+
+// ==================== 路由实例 ====================
+
 export const router = createRouter({
   history: createWebHistory(),
   routes,
 });
 
+// ==================== 路由守卫 ====================
+
+/**
+ * 全局前置守卫
+ *
+ * 认证逻辑：
+ * - requiresAuth: 需要登录才能访问
+ * - guestOnly: 仅未登录用户可访问
+ */
 router.beforeEach((to) => {
   const userStore = useUserStore(store);
   const { isLogin, accessToken } = storeToRefs(userStore);
   const isAuthenticated = Boolean(isLogin.value && accessToken.value);
 
+  // 需要认证的路由
   if (to.meta.requiresAuth && !isAuthenticated) {
-    return { name: "Login" };
+    return { name: LOGIN_ROUTE_NAME };
   }
 
+  // 仅访客可访问的路由
   if (to.meta.guestOnly && isAuthenticated) {
-    return { name: "Home" };
+    return { name: HOME_ROUTE_NAME };
   }
 
   return true;
 });
 
-// 初始化路由
+// ==================== 初始化函数 ====================
+
+/**
+ * 初始化路由
+ *
+ * @param app - Vue 应用实例
+ */
 export function initRouter(app: App<Element>): void {
   app.use(router);
 }

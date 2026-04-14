@@ -9,15 +9,23 @@ import { computed } from "vue";
 import * as z from "zod";
 
 import { useTauri } from "@/composables/useTauri";
-import { useColorMode } from "@vueuse/core";
+import { usePreferredDark } from "@vueuse/core";
+import { resolveThemeMode } from "@/utils/theme";
 import { useUserStore } from "@stores/user";
+import { useSettingsStore } from "@stores/settings";
 import { useI18n } from "vue-i18n";
 import api, { setRequestBaseURL } from "@/utils/request";
+import { HOME_ROUTE_NAME, OAUTH_PATH } from "@/config/constants";
 
 const router = useRouter();
 const { isTauri, openUrl } = useTauri();
-const mode = useColorMode({ disableTransition: false });
 const { t } = useI18n();
+const settingsStore = useSettingsStore();
+const { mode } = storeToRefs(settingsStore);
+const preferredDark = usePreferredDark();
+const resolvedTheme = computed(() =>
+  mode.value === "auto" ? (preferredDark.value ? "dark" : "light") : resolveThemeMode(mode.value),
+);
 
 const userStore = useUserStore();
 const { setIsLogin, setServerUrl, setLastLoginMethod } = userStore;
@@ -131,7 +139,7 @@ const submitOauth = async () => {
   try {
     setServerUrl(serverUrl.value);
     setRequestBaseURL(serverUrl.value);
-    const oauthUrl = new URL("/auth/casdoor?client=desktop", serverUrl.value).toString();
+    const oauthUrl = new URL(OAUTH_PATH, serverUrl.value).toString();
 
     if (isTauri.value) {
       await openUrl(oauthUrl);
@@ -140,7 +148,7 @@ const submitOauth = async () => {
 
     window.open(oauthUrl, "_blank", "noopener,noreferrer");
   } catch (error) {
-    const oauthUrl = new URL("/auth/casdoor?client=desktop", serverUrl.value).toString();
+    const oauthUrl = new URL(OAUTH_PATH, serverUrl.value).toString();
     if (isTauri.value) {
       console.error("[login] Failed to open external browser", error);
     }
@@ -169,7 +177,7 @@ const submitPassword = form.handleSubmit(async (values) => {
     userStore.setRefreshToken(data.refresh_token || "");
     userStore.setUser(data.user || {});
 
-    await router.push({ name: "Home" });
+    await router.push({ name: HOME_ROUTE_NAME });
   } finally {
     isLoading.value = false;
   }
@@ -184,7 +192,7 @@ const submitPassword = form.handleSubmit(async (values) => {
       <CardContent class="grid min-h-dvh p-0 md:grid-cols-2">
         <div class="bg-muted relative hidden min-h-dvh md:block">
           <img
-            :src="mode === 'dark' ? BackgroundDark : BackgroundLight"
+            :src="resolvedTheme === 'dark' ? BackgroundDark : BackgroundLight"
             alt="Image"
             class="pointer-events-none absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
           />

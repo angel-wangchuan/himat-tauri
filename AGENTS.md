@@ -1,5 +1,31 @@
 <!--VITE PLUS START-->
 
+## UI Components — shadcn-vue
+
+本项目使用 [shadcn-vue](https://shadcn-vue.com/docs/components) 作为 UI 组件库，基于 Radix Vue + Tailwind CSS。
+
+### 组件管理
+
+- **添加组件**: `vp dlx shadcn-vue@latest add <component>`
+  - 例: `vp dlx shadcn-vue@latest add button dialog input`
+  - 组件源码会下载到 `src/components/ui/` 目录下，可直接修改
+- **更新组件**: `vp dlx shadcn-vue@latest diff` 查看差异，`add` 重新添加即可覆盖
+- **不要手动安装** Radix Vue 子包，shadcn-vue CLI 会自动处理依赖
+
+### 组件使用规范
+
+```vue
+<!-- ✅ 从 ui 目录按需导入 -->
+import { Button } from '@/components/ui/button' import { Input } from '@/components/ui/input' import
+{ Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card' import { Table,
+TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+
+<!-- ❌ 不要这样做 -->
+import { Button } from 'radix-vue' // 不要直接导入 radix-vue import { Button } from 'shadcn-vue' //
+shadcn-vue 没有统一入口
+```
+
 # Using Vite+, the Unified Toolchain for the Web
 
 This project is using Vite+, a unified toolchain built on top of Vite, Rolldown, Vitest, tsdown, Oxlint, Oxfmt, and Vite Task. Vite+ wraps runtime management, package management, and frontend tooling in a single global CLI called `vp`. Vite+ is distinct from Vite, but it invokes Vite through `vp dev` and `vp build`.

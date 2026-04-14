@@ -6,7 +6,7 @@ import { getAppMenu } from "@/config/launchpad";
 import { useMiniApps } from "@/composables/useMiniApps";
 
 const appMenu = computed(() => getAppMenu());
-const { homeApps, loadMiniApps, openMiniApp } = useMiniApps();
+const { homeApps, loadMiniApps, openMiniApp, removeMiniAppFromHome } = useMiniApps();
 
 onMounted(() => {
   void loadMiniApps();
@@ -39,7 +39,7 @@ onMounted(() => {
 
       <div class="">
         <div>
-          <p class="text-sm font-semibold text-foreground">小程序</p>
+          <p class="text-sm font-semibold text-foreground">{{ $t("home.quickAccess") }}</p>
         </div>
 
         <div
@@ -52,20 +52,33 @@ onMounted(() => {
             class="group flex flex-col items-center rounded-[20px] px-3 py-4 transition-all hover:-translate-y-0.5 cursor-pointer"
             @click="openMiniApp(item)"
           >
-            <div
-              class="flex h-16 w-16 items-center justify-center rounded-[22px] bg-white shadow-sm ring-1 ring-slate-200/60"
-            >
-              <img :src="item.logo" :alt="item.name" class="size-12 rounded-[16px] object-cover" />
-            </div>
-            <p class="mt-3 text-center text-sm font-medium text-foreground">{{ item.name }}</p>
+            <ContextMenu>
+              <ContextMenuTrigger>
+                <div
+                  class="flex h-16 w-16 items-center justify-center rounded-[22px] bg-white shadow-sm ring-1 ring-slate-200/60"
+                >
+                  <img
+                    :src="item.logo"
+                    :alt="item.name"
+                    class="size-12 rounded-[16px] object-cover"
+                  />
+                </div>
+                <p class="mt-3 text-center text-sm font-medium text-foreground">{{ item.name }}</p>
+              </ContextMenuTrigger>
+              <ContextMenuContent>
+                <ContextMenuItem @click="removeMiniAppFromHome(item)">
+                  {{ $t("miniapp.menuItem.removeHome") }}
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
           </div>
-        </div>
 
-        <div
-          v-if="homeApps.length === 0"
-          class="mt-5 rounded-xl border border-dashed border-border bg-background px-4 py-8 text-center text-sm text-muted-foreground"
-        >
-          {{ $t("miniapp.emptyHome") }}
+          <div
+            v-if="homeApps.length === 0"
+            class="mt-5 rounded-xl border border-dashed border-border bg-background px-4 py-8 text-center text-sm text-muted-foreground"
+          >
+            {{ $t("home.emptyApps") }}
+          </div>
         </div>
       </div>
     </section>

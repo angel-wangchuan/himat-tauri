@@ -3,93 +3,159 @@ export default {
     name: "HiMat",
     description: "生態創新平台",
   },
-  common: {
-    search: "搜索",
-  },
   login: {
-    login: "登錄",
-    server_url: "伺服器地址",
-    username: "用戶名",
+    login: "登入",
+    server_url: "伺服器位址",
+    username: "使用者名稱",
     password: "密碼",
     button: {
-      login: "登錄",
-      oauth: "OAuth登錄",
+      login: "登入",
+      oauth: "OAuth登入",
     },
     switch: {
-      with: "切換登錄方式",
-      login: "用戶名密碼登錄",
-      oauth: "使用OAuth登錄",
+      with: "切換登入方式",
+      login: "使用者名稱密碼登入",
+      oauth: "使用OAuth登入",
     },
     placeholder: {
-      server_url: "請輸入伺服器地址",
-      username: "請輸入用戶名",
+      server_url: "請輸入伺服器位址",
+      username: "請輸入使用者名稱",
       password: "請輸入密碼",
     },
     validation: {
-      server_url_required: "請輸入伺服器地址",
-      server_url_invalid: "請輸入正確的伺服器地址",
-      username_required: "請輸入用戶名",
-      username_min: "用戶名至少 2 個字元",
-      username_max: "用戶名最多 50 個字元",
+      server_url_required: "請輸入伺服器位址",
+      server_url_invalid: "請輸入正確的伺服器位址",
+      username_required: "請輸入使用者名稱",
+      username_min: "使用者名稱至少 2 個字元",
+      username_max: "使用者名稱最多 50 個字元",
       password_required: "請輸入密碼",
       password_min: "密碼至少 2 個字元",
       password_max: "密碼最多 50 個字元",
     },
   },
-
-  menu: {
-    chat: {
-      name: "對話",
-      description: "智能對話，專業回答",
+  home: {
+    quickAccess: "快速存取",
+    emptyApps: "還沒有新增到首頁的小程式",
+  },
+  settings: {
+    title: "設定",
+    system: {
+      title: "系統設定",
+      general: {
+        title: "一般設定",
+        language: "語言",
+        theme: "主題",
+        light: "淺色",
+        dark: "深色",
+        auto: "系統",
+        color: "顏色",
+      },
+      proxy: {
+        title: "WebView 代理",
+        placeholder: "例如 http://127.0.0.1:7890",
+        hint: "僅支援 http:// 和 socks5://，並且必須包含連接埠。留空時按直連開啟。",
+      },
     },
-    agent: {
-      name: "智能體",
-      description: "智能體，專業回答",
+    user: {
+      title: "使用者設定",
     },
-    apps: {
-      name: "小程序",
-      description: "多種小程序一鍵直達",
+    about: {
+      title: "關於",
     },
-    knowledge: {
-      name: "知識庫",
-      description: "信息精准聚合知識庫",
-    },
-    drawing: {
-      name: "繪畫",
-      description: "多種繪製一鍵直達",
-    },
-    translate: {
-      name: "翻譯",
-      description: "翻譯語言，溝通世界",
-    },
-    files: {
-      name: "文件",
-      description: "文件貯存，海量歸檔",
-    },
-    store: {
-      name: "解決方案",
-      description: "解決方案的數位化身",
-    },
-    workflow: {
-      name: "工作流",
-      description: "工作流，自動化任務",
+  },
+  chat: {
+    name: "對話",
+    description: "智慧對話，專業回答",
+    placeholder: "輸入訊息...",
+    send: "傳送",
+    clear: "清空對話",
+  },
+  agent: {
+    name: "智慧體",
+    description: "智慧體，專業回答",
+  },
+  miniapp: {
+    name: "小程式",
+    description: "多種小程式一鍵直達",
+    title: "AI應用中心",
+    menuItem: {
+      addHome: "新增到首頁",
+      addedHome: "已在首頁",
+      removeHome: "從首頁移除",
+      hide: "隱藏應用",
     },
     settings: {
-      name: "設置",
-      description: "設置，自定義配置",
+      title: "小程式顯示設定",
+      description: "點擊條目可在顯示與隱藏列表之間切換。",
+      visible: "顯示的小程式",
+      hidden: "隱藏的小程式",
+      swap: "交換",
+      reset: "重設",
+      homeTag: "首頁",
+      emptyVisible: "暫無顯示中的小程式",
+      emptyHidden: "暫無隱藏的小程式",
     },
-    notes: {
-      name: "筆記",
-      description: "各種問題隨心記",
-    },
-    code: {
-      name: "代碼",
-      description: "代碼生成，智能編程",
-    },
-    openclaw: {
-      name: "OpenClaw",
-      description: "構建和部署 AI 應用的平台",
-    },
+  },
+  knowledge: {
+    name: "知識庫",
+    description: "資訊精準聚合知識庫",
+  },
+  drawing: {
+    name: "繪圖",
+    description: "多種繪製一鍵直達",
+  },
+  translate: {
+    name: "翻譯",
+    description: "翻譯語言，溝通世界",
+  },
+  files: {
+    name: "檔案",
+    description: "檔案貯存，海量歸檔",
+  },
+  code: {
+    name: "程式碼",
+    description: "程式碼產生，智慧程式設計",
+  },
+  notes: {
+    name: "筆記",
+    description: "各種問題隨心記",
+  },
+  workflow: {
+    name: "工作流程",
+    description: "工作流程，自動化任務",
+  },
+  store: {
+    name: "助手庫",
+    description: "解決方案的數位化身",
+  },
+  openclaw: {
+    name: "OpenClaw",
+    description: "建構和部署 AI 應用的平台",
+  },
+  common: {
+    search: "搜尋",
+    loading: "載入中...",
+    empty: "暫無資料",
+    cancel: "取消",
+    confirm: "確認",
+    save: "儲存",
+    delete: "刪除",
+    edit: "編輯",
+    close: "關閉",
+    back: "返回",
+    next: "下一步",
+    previous: "上一步",
+    success: "成功",
+    error: "錯誤",
+    warning: "警告",
+    info: "提示",
+  },
+  browser: {
+    refresh: "重新整理",
+    back: "後退",
+    forward: "前進",
+    openInBrowser: "在瀏覽器中開啟",
+    noTabs: "沒有開啟的分頁",
   },
   nativeMenu: {
     tray: {
@@ -111,22 +177,12 @@ export default {
       copy: "複製",
       paste: "貼上",
       selectAll: "全選",
-      viewMenuTitle: "顯示",
+      viewMenuTitle: "檢視",
       enterFullScreen: "進入全螢幕",
       windowMenuTitle: "視窗",
       showWindow: "顯示視窗",
       minimize: "最小化",
       closeWindow: "關閉視窗",
-    },
-  },
-
-  miniapp: {
-    name: "AI應用中心",
-    emptyHome: "還沒有添加到首頁的小程序",
-    menuItem: {
-      addHome: "添加到首頁",
-      addedHome: "已在首頁",
-      hide: "隱藏應用",
     },
   },
 };

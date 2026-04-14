@@ -3,9 +3,6 @@ export default {
     name: "HiMat",
     description: "生态创新平台",
   },
-  common: {
-    search: "搜索",
-  },
   login: {
     login: "登录",
     server_url: "服务器地址",
@@ -36,59 +33,129 @@ export default {
       password_max: "密码最多 50 个字符",
     },
   },
-  menu: {
-    chat: {
-      name: "对话",
-      description: "智能对话，专业回答",
+  home: {
+    quickAccess: "快速访问",
+    emptyApps: "还没有添加到首页的小程序",
+  },
+  settings: {
+    title: "设置",
+    system: {
+      title: "系统设置",
+      general: {
+        title: "常规设置",
+        language: "语言",
+        theme: "主题",
+        light: "亮色",
+        dark: "暗黑",
+        auto: "系统",
+        color: "颜色",
+      },
+      proxy: {
+        title: "WebView 代理",
+        placeholder: "例如 http://127.0.0.1:7890",
+        hint: "仅支持 http:// 和 socks5://，并且必须包含端口。留空时按直连打开。",
+      },
     },
-    agent: {
-      name: "智能体",
-      description: "智能体，专业回答",
+    user: {
+      title: "用户设置",
     },
-    apps: {
-      name: "小程序",
-      description: "多种小程序一键直达",
+    about: {
+      title: "关于",
     },
-    knowledge: {
-      name: "知识库",
-      description: "信息精准聚合知识库",
-    },
-    drawing: {
-      name: "绘画",
-      description: "多种绘制一键直达",
-    },
-    translate: {
-      name: "翻译",
-      description: "翻译语言，沟通世界",
-    },
-    files: {
-      name: "文件",
-      description: "文件贮存，海量归档",
-    },
-    store: {
-      name: "助手库",
-      description: "解决方案的数字化身",
-    },
-    workflow: {
-      name: "工作流",
-      description: "工作流，自动化任务",
+  },
+  chat: {
+    name: "对话",
+    description: "智能对话，专业回答",
+    placeholder: "输入消息...",
+    send: "发送",
+    clear: "清空对话",
+  },
+  agent: {
+    name: "智能体",
+    description: "智能体，专业回答",
+  },
+  miniapp: {
+    name: "小程序",
+    description: "多种小程序一键直达",
+    title: "AI应用中心",
+    menuItem: {
+      addHome: "添加到首页",
+      addedHome: "已在首页",
+      removeHome: "从首页移除",
+      hide: "隐藏应用",
     },
     settings: {
-      name: "设置",
-      description: "设置，自定义配置",
+      title: "小程序显示设置",
+      description: "点击条目可在显示与隐藏列表之间切换。",
+      visible: "显示的小程序",
+      hidden: "隐藏的小程序",
+      swap: "交换",
+      reset: "重置",
+      homeTag: "首页",
+      emptyVisible: "暂无显示中的小程序",
+      emptyHidden: "暂无隐藏的小程序",
     },
-    notes: {
-      name: "笔记",
-      description: "各种问题随心记",
-    },
-    code: {
-      name: "代码",
-      description: "代码生成，智能编程",
-    },
-    openclaw: {
-      name: "OpenClaw",
-      description: "构建和部署 AI 应用的平台",
-    },
+  },
+  knowledge: {
+    name: "知识库",
+    description: "信息精准聚合知识库",
+  },
+  drawing: {
+    name: "绘图",
+    description: "多种绘制一键直达",
+  },
+  translate: {
+    name: "翻译",
+    description: "翻译语言，沟通世界",
+  },
+  files: {
+    name: "文件",
+    description: "文件贮存，海量归档",
+  },
+  code: {
+    name: "代码",
+    description: "代码生成，智能编程",
+  },
+  notes: {
+    name: "笔记",
+    description: "各种问题随心记",
+  },
+  workflow: {
+    name: "工作流",
+    description: "工作流，自动化任务",
+  },
+  store: {
+    name: "助手库",
+    description: "解决方案的数字化身",
+  },
+  openclaw: {
+    name: "OpenClaw",
+    description: "构建和部署 AI 应用的平台",
+  },
+  common: {
+    search: "搜索",
+    loading: "加载中...",
+    empty: "暂无数据",
+    cancel: "取消",
+    confirm: "确认",
+    save: "保存",
+    delete: "删除",
+    edit: "编辑",
+    close: "关闭",
+    back: "返回",
+    next: "下一步",
+    previous: "上一步",
+    success: "成功",
+    error: "错误",
+    warning: "警告",
+    info: "提示",
+  },
+  browser: {
+    refresh: "刷新",
+    back: "后退",
+    forward: "前进",
+    openInBrowser: "在浏览器中打开",
+    noTabs: "没有打开的标签页",
   },
   nativeMenu: {
     tray: {
@@ -116,15 +183,6 @@ export default {
       showWindow: "显示窗口",
       minimize: "最小化",
       closeWindow: "关闭窗口",
-    },
-  },
-  miniapp: {
-    name: "AI应用中心",
-    emptyHome: "还没有添加到首页的小程序",
-    menuItem: {
-      addHome: "添加到首页",
-      addedHome: "已在首页",
-      hide: "隐藏应用",
     },
   },
 };

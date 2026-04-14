@@ -3,9 +3,6 @@ export default {
     name: "HiMat",
     description: "Ecosystem Innovation Platform",
   },
-  common: {
-    search: "Search",
-  },
   login: {
     login: "Login",
     server_url: "Server URL",
@@ -36,60 +33,129 @@ export default {
       password_max: "Password must be at most 50 characters",
     },
   },
-
-  menu: {
-    chat: {
-      name: "Chat",
-      description: "Smart conversation, professional answers",
+  home: {
+    quickAccess: "Quick Access",
+    emptyApps: "No mini apps added to home yet",
+  },
+  settings: {
+    title: "Settings",
+    system: {
+      title: "System Settings",
+      general: {
+        title: "General Settings",
+        language: "Language",
+        theme: "Theme",
+        light: "Light",
+        dark: "Dark",
+        auto: "Auto",
+        color: "Color",
+      },
+      proxy: {
+        title: "WebView Proxy",
+        placeholder: "e.g. http://127.0.0.1:7890",
+        hint: "Only http:// and socks5:// are supported, and port must be included. Leave blank for direct connection.",
+      },
     },
-    agent: {
-      name: "Agent",
-      description: "Intelligent agent, professional answers",
+    user: {
+      title: "User Settings",
     },
-    apps: {
-      name: "Mini Programs",
-      description: "Multiple mini programs at your fingertips",
+    about: {
+      title: "About",
     },
-    knowledge: {
-      name: "Knowledge Base",
-      description: "Precise information aggregation",
-    },
-    drawing: {
-      name: "Drawing",
-      description: "Multiple drawing tools at your fingertips",
-    },
-    translate: {
-      name: "Translate",
-      description: "Translate languages, connect the world",
-    },
-    files: {
-      name: "Files",
-      description: "File storage, massive archiving",
-    },
-    store: {
-      name: "Assistant Library",
-      description: "Digital embodiment of solutions",
-    },
-    workflow: {
-      name: "Workflow",
-      description: "Workflow, automation tasks",
+  },
+  chat: {
+    name: "Chat",
+    description: "Smart conversation, professional answers",
+    placeholder: "Type a message...",
+    send: "Send",
+    clear: "Clear Chat",
+  },
+  agent: {
+    name: "Agent",
+    description: "Intelligent agent, professional answers",
+  },
+  miniapp: {
+    name: "Mini Programs",
+    description: "Multiple mini programs at your fingertips",
+    title: "AI App Center",
+    menuItem: {
+      addHome: "Add to Home",
+      addedHome: "Already on Home",
+      removeHome: "Remove from Home",
+      hide: "Hide App",
     },
     settings: {
-      name: "Settings",
-      description: "Settings, custom configuration",
+      title: "Mini App Display Settings",
+      description: "Click an item to move it between the visible and hidden lists.",
+      visible: "Visible Mini Apps",
+      hidden: "Hidden Mini Apps",
+      swap: "Swap",
+      reset: "Reset",
+      homeTag: "Home",
+      emptyVisible: "No visible mini apps",
+      emptyHidden: "No hidden mini apps",
     },
-    notes: {
-      name: "Notes",
-      description: "Record various questions at will",
-    },
-    code: {
-      name: "Code",
-      description: "Code generation, intelligent programming",
-    },
-    openclaw: {
-      name: "OpenClaw",
-      description: "A platform for building and deploying AI applications",
-    },
+  },
+  knowledge: {
+    name: "Knowledge Base",
+    description: "Precise information aggregation",
+  },
+  drawing: {
+    name: "Drawing",
+    description: "Multiple drawing tools at your fingertips",
+  },
+  translate: {
+    name: "Translate",
+    description: "Translate languages, connect the world",
+  },
+  files: {
+    name: "Files",
+    description: "File storage, massive archiving",
+  },
+  code: {
+    name: "Code",
+    description: "Code generation, intelligent programming",
+  },
+  notes: {
+    name: "Notes",
+    description: "Record various questions at will",
+  },
+  workflow: {
+    name: "Workflow",
+    description: "Workflow, automation tasks",
+  },
+  store: {
+    name: "Assistant Library",
+    description: "Digital embodiment of solutions",
+  },
+  openclaw: {
+    name: "OpenClaw",
+    description: "A platform for building and deploying AI applications",
+  },
+  common: {
+    search: "Search",
+    loading: "Loading...",
+    empty: "No data",
+    cancel: "Cancel",
+    confirm: "Confirm",
+    save: "Save",
+    delete: "Delete",
+    edit: "Edit",
+    close: "Close",
+    back: "Back",
+    next: "Next",
+    previous: "Previous",
+    success: "Success",
+    error: "Error",
+    warning: "Warning",
+    info: "Info",
+  },
+  browser: {
+    refresh: "Refresh",
+    back: "Back",
+    forward: "Forward",
+    openInBrowser: "Open in Browser",
+    noTabs: "No tabs opened",
   },
   nativeMenu: {
     tray: {
@@ -117,15 +183,6 @@ export default {
       showWindow: "Show Window",
       minimize: "Minimize",
       closeWindow: "Close Window",
-    },
-  },
-  miniapp: {
-    name: "AI App Center",
-    emptyHome: "No mini apps have been added to home yet",
-    menuItem: {
-      addHome: "Add to Home",
-      addedHome: "Already on Home",
-      hide: "Hide App",
     },
   },
 };

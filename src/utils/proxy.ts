@@ -1,6 +1,7 @@
 import { listen } from "@tauri-apps/api/event";
 
 import { tauriInvoke } from "@/utils/tauri";
+import { PROXY_MAX_RETRY_COUNT, PROXY_RETRY_DELAY_MS, PROXY_TIMEOUT_MS } from "@/config/constants";
 
 interface SetProxyArgs {
   proxy: string | null;
@@ -81,19 +82,19 @@ export function waitForProxyServer(): Promise<string> {
     });
 
     void (async () => {
-      for (let attempt = 0; attempt < 20 && !settled; attempt += 1) {
+      for (let attempt = 0; attempt < PROXY_MAX_RETRY_COUNT && !settled; attempt += 1) {
         try {
           const localAddr = await getLocalProxyAddr();
           settle(() => resolve(localAddr));
           return;
         } catch {
-          await sleep(250);
+          await sleep(PROXY_RETRY_DELAY_MS);
         }
       }
     })();
 
     timeoutId = window.setTimeout(() => {
       settle(() => reject(new Error("本地代理服务启动超时")));
-    }, 6000);
+    }, PROXY_TIMEOUT_MS);
   });
 }

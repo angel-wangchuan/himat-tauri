@@ -3,10 +3,11 @@ import { createI18n } from "vue-i18n";
 import zhCN from "./locales/zh-CN";
 import zhTW from "./locales/zh-TW";
 import enUS from "./locales/en-US";
+import { LOCALE_STORAGE_KEY } from "@/config/constants";
 
 export type Lang = "zh-CN" | "zh-TW" | "en-US";
 
-const STORAGE_KEY = "app-locale";
+const STORAGE_KEY = LOCALE_STORAGE_KEY;
 
 export type AppLocale = Lang;
 

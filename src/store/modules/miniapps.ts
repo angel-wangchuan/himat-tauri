@@ -42,6 +42,19 @@ export const useMiniAppsStore = defineStore(
       }
     }
 
+    function showApp(appId: string) {
+      hiddenAppIds.value = hiddenAppIds.value.filter((id) => id !== appId);
+    }
+
+    function setHiddenAppIds(appIds: string[]) {
+      const validIds = new Set(apps.value.map((item) => item.id));
+      hiddenAppIds.value = appIds.filter((id) => validIds.has(id));
+    }
+
+    function resetHiddenApps() {
+      hiddenAppIds.value = [];
+    }
+
     function isHomeApp(appId: string) {
       return homeAppIds.value.includes(appId);
     }
@@ -59,6 +72,9 @@ export const useMiniAppsStore = defineStore(
       addToHome,
       removeFromHome,
       hideApp,
+      showApp,
+      setHiddenAppIds,
+      resetHiddenApps,
       isHomeApp,
       isHiddenApp,
     };

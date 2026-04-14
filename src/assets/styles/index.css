@@ -115,19 +115,11 @@
 
 /* himat */
 [data-color="default"] {
-  --primary: oklab(65.598% -0.06205 -0.17937);
+  --primary: #0293ff;
   --primary-foreground: oklch(0.97 0.02 250);
-  --ring: oklab(65.598% -0.06205 -0.17937);
-  --sidebar-primary: oklab(65.598% -0.06205 -0.17937);
-  --chart-1: oklab(65.598% -0.06205 -0.17937);
-}
-
-[data-color="blue"] {
-  --primary: oklch(0.546 0.245 262.881);
-  --primary-foreground: oklch(0.97 0.02 250);
-  --ring: oklch(0.546 0.245 262.881);
-  --sidebar-primary: oklch(0.546 0.245 262.881);
-  --chart-1: oklch(0.546 0.245 262.881);
+  --ring: #0293ff;
+  --sidebar-primary: #0293ff;
+  --chart-1: #0293ff;
 }
 
 /* 绿色 */
@@ -166,6 +158,51 @@
   --chart-1: oklch(0.645 0.246 16.439);
 }
 
+/* 橙色 */
+[data-color="orange"] {
+  --primary: oklch(0.75 0.183 55.934);
+  --primary-foreground: oklch(0.15 0.03 50);
+  --ring: oklch(0.75 0.183 55.934);
+  --sidebar-primary: oklch(0.75 0.183 55.934);
+  --chart-1: oklch(0.75 0.183 55.934);
+}
+
+/* 黄色 */
+[data-color="yellow"] {
+  --primary: oklch(0.852 0.199 91.936);
+  --primary-foreground: oklch(0.15 0.03 90);
+  --ring: oklch(0.852 0.199 91.936);
+  --sidebar-primary: oklch(0.852 0.199 91.936);
+  --chart-1: oklch(0.852 0.199 91.936);
+}
+
+/* 绿色 */
+[data-color="green"] {
+  --primary: oklch(0.696 0.17 162.48);
+  --primary-foreground: oklch(0.145 0.02 160);
+  --ring: oklch(0.696 0.17 162.48);
+  --sidebar-primary: oklch(0.696 0.17 162.48);
+  --chart-1: oklch(0.696 0.17 162.48);
+}
+
+/* 紫罗兰 */
+[data-color="violet"] {
+  --primary: oklch(0.541 0.281 293.009);
+  --primary-foreground: oklch(0.97 0.02 300);
+  --ring: oklch(0.541 0.281 293.009);
+  --sidebar-primary: oklch(0.541 0.281 293.009);
+  --chart-1: oklch(0.541 0.281 293.009);
+}
+
+/* 锌色 */
+[data-color="zinc"] {
+  --primary: oklch(0.37 0.013 285.805);
+  --primary-foreground: oklch(0.97 0.02 280);
+  --ring: oklch(0.37 0.013 285.805);
+  --sidebar-primary: oklch(0.37 0.013 285.805);
+  --chart-1: oklch(0.37 0.013 285.805);
+}
+
 /* ============ base 层 ============ */
 
 @layer base {
@@ -181,4 +218,9 @@
   button {
     @apply cursor-pointer;
   }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
 }
