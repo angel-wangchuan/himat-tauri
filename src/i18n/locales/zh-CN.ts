@@ -70,9 +70,12 @@ export default {
         downloading: "正在下载更新...",
         installing: "正在安装更新...",
         restart: "重启以应用更新",
+        restartPrompt: "更新已下载完成，是否立即重启应用？",
         error: "检查更新失败",
         noUpdate: "暂无更新",
         disabled: "更新功能已禁用",
+        download: "下载更新",
+        later: "稍后",
       },
       updateConfig: {
         title: "更新配置",
@@ -190,6 +193,7 @@ export default {
     info: "提示",
     yes: "是",
     no: "否",
+    later: "稍后",
   },
   browser: {
     refresh: "刷新",

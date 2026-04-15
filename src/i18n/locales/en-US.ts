@@ -70,9 +70,12 @@ export default {
         downloading: "Downloading update...",
         installing: "Installing update...",
         restart: "Restart to Apply Update",
+        restartPrompt: "Update has been downloaded. Restart now?",
         error: "Failed to check for updates",
         noUpdate: "No updates available",
         disabled: "Update feature is disabled",
+        download: "Download Update",
+        later: "Later",
       },
       updateConfig: {
         title: "Update Configuration",
@@ -190,6 +193,7 @@ export default {
     info: "Info",
     yes: "Yes",
     no: "No",
+    later: "Later",
   },
   browser: {
     refresh: "Refresh",

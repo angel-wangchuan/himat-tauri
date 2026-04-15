@@ -4,12 +4,28 @@ on:
   push:
     branches:
       - release
+  workflow_dispatch: # 手动触发
 
 # This workflow builds and publishes Tauri app for multiple platforms.
-# On each push to the `release` branch it will create or update a GitHub release, build your app, and upload the artifacts to the release.
+# On each push to the `release` branch it will create a GitHub release with tag v{version}, build your app, and upload the artifacts.
+# The created tag automatically triggers publish-macos-signed.yml for signed macOS builds.
 
 jobs:
+  # 第一步：获取版本号
+  get-version:
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version from tauri.conf.json
+        id: version
+        run: echo "version=$(jq -r '.version' src-tauri/tauri.conf.json)" >> $GITHUB_OUTPUT
+
+  # 第二步：构建多平台版本
   publish-tauri:
+    needs: get-version
     permissions:
       contents: write
     strategy:
@@ -20,7 +36,7 @@ jobs:
             args: "--target aarch64-apple-darwin"
           - platform: "macos-latest" # for Intel based macs.
             args: "--target x86_64-apple-darwin"
-          - platform: "ubuntu-22.04" # for Tauri v1 you could replace this with ubuntu-20.04.
+          - platform: "ubuntu-22.04" # for Tauri v2
             args: ""
           - platform: "windows-latest"
             args: ""
@@ -71,9 +87,11 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
-          releaseName: "App v__VERSION__"
+          tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
+          releaseName: "v__VERSION__"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+  

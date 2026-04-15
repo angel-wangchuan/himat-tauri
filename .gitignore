@@ -17,6 +17,7 @@ optimization
 # Environment variables
 .env
 !.env.example
+.certificate
 
 # Editor directories and files
 .vscode/*

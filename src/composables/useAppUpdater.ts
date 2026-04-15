@@ -19,7 +19,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { check, DownloadEvent, Update } from "@tauri-apps/plugin-updater";
+import { check, DownloadEvent } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
 
 export interface UpdateStatus {
@@ -29,8 +29,10 @@ export interface UpdateStatus {
   downloading: boolean;
   /** 是否有可用更新 */
   available: boolean;
-  /** 当前更新信息 */
-  update: Update | null;
+  /** 可用更新的版本号 */
+  version: string | null;
+  /** 更新说明 */
+  notes: string | null;
   /** 下载进度 (0-100) */
   progress: number;
 }
@@ -51,7 +53,8 @@ export function useAppUpdater() {
     checking: false,
     downloading: false,
     available: false,
-    update: null,
+    version: null,
+    notes: null,
     progress: 0,
   });
 
@@ -71,14 +74,17 @@ export function useAppUpdater() {
     try {
       const update = await check();
 
+      console.log("update", update);
+
       if (update) {
         status.value.available = true;
-        status.value.update = update;
+        status.value.version = update.version;
+        status.value.notes = update.notes || null;
         toast.success(t("settings.about.updates.updateAvailable", { version: update.version }));
         return true;
       } else {
         status.value.available = false;
-        status.value.update = null;
+        status.value.version = null;
         toast.info(t("settings.about.updates.upToDate"));
         return false;
       }
@@ -97,20 +103,23 @@ export function useAppUpdater() {
    * @param onUpdateProgress - 进度回调函数 (可选)
    */
   async function downloadAndUpdate(onUpdateProgress?: (progress: number) => void): Promise<void> {
-    if (!status.value.update) {
-      toast.info(t("settings.about.updates.noUpdate"));
-      return;
-    }
-
     status.value.downloading = true;
     status.value.progress = 0;
     toast.info(t("settings.about.updates.downloading"));
 
     try {
+      const update = await check();
+
+      if (!update) {
+        toast.info(t("settings.about.updates.noUpdate"));
+        status.value.downloading = false;
+        return;
+      }
+
       let downloadedSize = 0;
       let totalSize = 0;
 
-      await status.value.update.downloadAndInstall((event: DownloadEvent) => {
+      await update.downloadAndInstall((event: DownloadEvent) => {
         switch (event.event) {
           case "Started":
             totalSize = event.data.contentLength || 0;
@@ -164,7 +173,7 @@ export function useAppUpdater() {
       checking: false,
       downloading: false,
       available: false,
-      update: null,
+      version: null,
       progress: 0,
     };
   }

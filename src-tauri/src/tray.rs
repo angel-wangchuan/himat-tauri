@@ -1,7 +1,7 @@
 use serde::Deserialize;
 use tauri::{
     image::Image,
-    menu::{Menu, MenuItem, PredefinedMenuItem, Submenu},
+    menu::{Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     AppHandle, Emitter, Manager,
 };
@@ -10,6 +10,7 @@ use tauri::{
 #[serde(rename_all = "camelCase")]
 pub struct NativeMenuLabels {
     pub tray: TrayMenuLabels,
+    #[cfg(target_os = "macos")]
     pub mac: MacMenuLabels,
 }
 
@@ -19,6 +20,7 @@ pub struct TrayMenuLabels {
     pub quit: String,
 }
 
+#[cfg(target_os = "macos")]
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MacMenuLabels {
@@ -51,6 +53,7 @@ impl Default for NativeMenuLabels {
                 show: "显示窗口".to_string(),
                 quit: "退出".to_string(),
             },
+            #[cfg(target_os = "macos")]
             mac: MacMenuLabels {
                 app_menu_title: "HiMat".to_string(),
                 about: "关于 HiMat".to_string(),
@@ -159,6 +162,8 @@ fn set_app_menu(app: &AppHandle, labels: &NativeMenuLabels) -> tauri::Result<()>
 
 #[cfg(target_os = "macos")]
 fn build_app_menu(app: &AppHandle, labels: &MacMenuLabels) -> tauri::Result<Menu<tauri::Wry>> {
+    use tauri::menu::Submenu;
+    
     let show_window = MenuItem::with_id(app, "show", &labels.show_window, true, None::<&str>)?;
 
     let app_menu = Submenu::with_items(

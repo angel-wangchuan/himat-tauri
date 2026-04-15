@@ -1,6 +1,6 @@
 [package]
 name = "himat"
-version = "0.1.0"
+version = "0.0.9"
 description = "himat"
 authors = ["you"]
 edition = "2021"
