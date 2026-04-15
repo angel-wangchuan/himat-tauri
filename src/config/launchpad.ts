@@ -1,7 +1,5 @@
 import { i18n } from "@/i18n";
 
-const t = i18n.global.t;
-
 import agentIcon from "@imgs/launchpad/agent.png";
 import appsIcon from "@imgs/launchpad/apps.png";
 import chatIcon from "@imgs/launchpad/chat.png";
@@ -16,6 +14,7 @@ import translateIcon from "@imgs/launchpad/translate.png";
 import workflowIcon from "@imgs/launchpad/workflow.png";
 
 export function getAppMenu() {
+  const t = i18n.global.t;
   return [
     {
       name: t("chat.name"),

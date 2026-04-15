@@ -1,0 +1,23 @@
+{
+  "version": "0.1.1",
+  "notes": "修复了一些问题，优化了用户体验",
+  "pub_date": "2026-04-15T10:00:00.000Z",
+  "platforms": {
+    "darwin-aarch64": {
+      "signature": "YOUR_SIGNATURE_HERE",
+      "url": "https://himat.wiat.ac.cns/darwin/aarch64/0.1.0/App.tar.gz"
+    },
+    "darwin-x86_64": {
+      "signature": "YOUR_SIGNATURE_HERE",
+      "url": "https://himat.wiat.ac.cns/darwin/x86_64/0.1.0/App.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "YOUR_SIGNATURE_HERE",
+      "url": "https://himat.wiat.ac.cns/windows/x86_64/0.1.0/App.msi"
+    },
+    "linux-x86_64": {
+      "signature": "YOUR_SIGNATURE_HERE",
+      "url": "https://himat.wiat.ac.cns/linux/x86_64/0.1.0/App.AppImage"
+    }
+  }
+}

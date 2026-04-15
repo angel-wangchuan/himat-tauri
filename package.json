@@ -9,7 +9,14 @@
     "preview": "vp preview",
     "tauri": "tauri",
     "sdk": "pnpm add ../himat-api-sdk",
-    "sync-i18n": "node scripts/sync-i18n.mjs"
+    "sync-i18n": "node scripts/sync-i18n.mjs",
+    "build:app": "node scripts/build.mjs",
+    "build:app:macos": "node scripts/build.mjs -t macos",
+    "build:app:macos-arm": "node scripts/build.mjs -t macos-aarch64",
+    "build:app:windows": "node scripts/build.mjs -t windows",
+    "build:app:linux": "node scripts/build.mjs -t linux",
+    "build:app:debug": "node scripts/build.mjs -d",
+    "updater:sign": "tauri signer sign -k .tauri/himat.key"
   },
   "dependencies": {
     "@himat/api-sdk": "link:../himat-api-sdk",
@@ -32,7 +39,7 @@
     "tailwind-merge": "^3.5.0",
     "vee-validate": "^4.15.1",
     "vue": "^3.5.31",
-    "vue-i18n": "12.0.0-alpha.3",
+    "vue-i18n": "^11.3.2",
     "vue-router": "^5.0.4",
     "vue-sonner": "^2.0.9",
     "zod": "3.25.76"

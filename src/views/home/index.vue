@@ -72,13 +72,13 @@ onMounted(() => {
               </ContextMenuContent>
             </ContextMenu>
           </div>
+        </div>
 
-          <div
-            v-if="homeApps.length === 0"
-            class="mt-5 rounded-xl border border-dashed border-border bg-background px-4 py-8 text-center text-sm text-muted-foreground"
-          >
-            {{ $t("home.emptyApps") }}
-          </div>
+        <div
+          v-if="homeApps.length === 0"
+          class="mt-5 rounded-xl border border-dashed border-border bg-background px-4 py-8 text-center text-sm text-muted-foreground"
+        >
+          {{ $t("home.emptyApps") }}
         </div>
       </div>
     </section>

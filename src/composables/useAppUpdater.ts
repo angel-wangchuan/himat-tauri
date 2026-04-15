@@ -1,7 +1,19 @@
 /**
  * 应用更新管理 Composable
  *
- * 职责：提供应用版本检查和更新功能
+ * 使用 Tauri updater 插件的静态 JSON 文件模式
+ * 服务端需要提供 latest.json 文件，格式如下：
+ * {
+ *   "version": "1.0.1",
+ *   "notes": "更新说明",
+ *   "pub_date": "2025-02-10T14:16:54.999Z",
+ *   "platforms": {
+ *     "darwin-aarch64": {
+ *       "signature": "签名",
+ *       "url": "https://example.com/update.tar.gz"
+ *     }
+ *   }
+ * }
  */
 
 import { ref } from "vue";

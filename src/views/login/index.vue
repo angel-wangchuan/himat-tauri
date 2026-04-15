@@ -176,7 +176,7 @@ const submitPassword = form.handleSubmit(async (values) => {
     setIsLogin(true);
     userStore.setAccessToken(data.access_token || "");
     userStore.setRefreshToken(data.refresh_token || "");
-    
+
     // 转换 SDK User 类型为本地 User 类型
     const sdkUser = data.user;
     if (sdkUser) {

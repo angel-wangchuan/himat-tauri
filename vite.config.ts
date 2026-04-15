@@ -69,5 +69,36 @@ export default defineConfig(async () => ({
     target: ["es2021", "chrome100", "safari13"],
     minify: !process.env.TAURI_DEBUG ? ("esbuild" as const) : false,
     sourcemap: !!process.env.TAURI_DEBUG,
+    chunkSizeWarningLimit: 1000,
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          minSize: 20000,
+          groups: [
+            {
+              name: "vue-vendor",
+              test: /node_modules[\\/]vue/,
+              priority: 20,
+            },
+            {
+              name: "radix-vendor",
+              test: /node_modules[\\/]radix-vue/,
+              priority: 15,
+            },
+            {
+              name: "vendor",
+              test: /node_modules/,
+              priority: 10,
+            },
+            {
+              name: "common",
+              minShareCount: 2,
+              minSize: 10000,
+              priority: 5,
+            },
+          ],
+        },
+      },
+    },
   },
 }));
