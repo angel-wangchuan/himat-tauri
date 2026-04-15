@@ -13,8 +13,8 @@ importers:
   .:
     dependencies:
       '@himat/api-sdk':
-        specifier: link:../himat-api-sdk
-        version: link:../himat-api-sdk
+        specifier: latest
+        version: 1.0.11
       '@internationalized/date':
         specifier: ^3.12.0
         version: 3.12.0
@@ -443,6 +443,9 @@ packages:
 
   '@floating-ui/vue@1.1.11':
     resolution: {integrity: sha512-HzHKCNVxnGS35r9fCHBc3+uCnjw9IWIlCPL683cGgM9Kgj2BiAl8x1mS7vtvP6F9S/e/q4O6MApwSHj8hNLGfw==}
+
+  '@himat/api-sdk@1.0.11':
+    resolution: {integrity: sha512-vEpjstzwEzxUz0i+MB5f9zOklhp9nRkNk1j+F8l1+rG6T0+R0781ZXC36U9loUIqQVdItk3ng8UZNU0kEoM8eQ==, tarball: https://onedev.prod.scqcyz.cn/himat/~npm/@himat%2Fapi-sdk/-/1.0.11/@himat%2Fapi-sdk-1.0.11.tgz}
 
   '@iconify-json/radix-icons@1.2.6':
     resolution: {integrity: sha512-izgVBJwk37dSvsma1QsRMfCWQ4FIImbBmJId1WUURzRZA5fFyKlCcG/nZC8se0KhOBWszo2mYgLmhKJv/DFPoA==}
@@ -2349,6 +2352,12 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
+
+  '@himat/api-sdk@1.0.11':
+    dependencies:
+      axios: 1.15.0
+    transitivePeerDependencies:
+      - debug
 
   '@iconify-json/radix-icons@1.2.6':
     dependencies:
