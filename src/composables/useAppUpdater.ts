@@ -1,19 +1,7 @@
 /**
  * 应用更新管理 Composable
  *
- * 使用 Tauri updater 插件的静态 JSON 文件模式
- * 服务端需要提供 latest.json 文件，格式如下：
- * {
- *   "version": "1.0.1",
- *   "notes": "更新说明",
- *   "pub_date": "2025-02-10T14:16:54.999Z",
- *   "platforms": {
- *     "darwin-aarch64": {
- *       "signature": "签名",
- *       "url": "https://example.com/update.tar.gz"
- *     }
- *   }
- * }
+ * 使用 Tauri updater 插件实现应用更新检查、下载和安装功能。
  */
 
 import { ref } from "vue";
@@ -79,7 +67,7 @@ export function useAppUpdater() {
       if (update) {
         status.value.available = true;
         status.value.version = update.version;
-        status.value.notes = update.notes || null;
+        status.value.notes = update.body || null;
         toast.success(t("settings.about.updates.updateAvailable", { version: update.version }));
         return true;
       } else {
@@ -174,6 +162,7 @@ export function useAppUpdater() {
       downloading: false,
       available: false,
       version: null,
+      notes: null,
       progress: 0,
     };
   }
